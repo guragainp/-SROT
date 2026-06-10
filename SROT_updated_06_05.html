@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SROT · Material Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Noto+Serif+Devanagari:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root {
+  --serif: 'Libre Baskerville', Georgia, serif;
+  --sans: 'DM Sans', sans-serif;
+  --deva: 'Noto Serif Devanagari', serif;
+  --green-deep: #0F6E56;
+  --green-mid: #1D9E75;
+  --green-light: #5DCAA5;
+  --green-pale: #E1F5EE;
+  --green-xpale: #F0FAF6;
+  --green-dark: #085041;
+  --amber: #EF9F27;
+  --amber-pale: #FAEEDA;
+  --red: #D85A30;
+  --red-pale: #FAECE7;
+  --blue: #185FA5;
+  --blue-pale: #E6F1FB;
+  --purple: #534AB7;
+  --purple-pale: #EEEDFE;
+  --text-primary: #1A1A18;
+  --text-secondary: #5A5A56;
+  --text-tertiary: #9A9A96;
+  --border: #E2E0D8;
+  --border-mid: #CCCAC0;
+  --bg: #FAFAF8;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #F5F5F2;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text-primary); font-size: 14px; line-height: 1.5; }
+
+/* ─── TOP BAR ─── */
+.top-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 28px; border-bottom: 0.5px solid var(--border); background: var(--bg-card); position: sticky; top: 0; z-index: 100; }
+.logo { display: flex; align-items: baseline; gap: 6px; }
+.logo-name { font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--green-deep); letter-spacing: 0.06em; }
+.logo-deva { font-family: var(--deva); font-size: 15px; color: var(--text-secondary); font-weight: 400; }
+.logo-tag { font-family: var(--sans); font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.1em; text-transform: uppercase; }
+.nav-pills { display: flex; gap: 4px; flex-wrap: wrap; }
+.nav-pill { font-family: var(--sans); font-size: 12px; padding: 5px 13px; border-radius: 20px; border: 0.5px solid var(--border); color: var(--text-secondary); cursor: pointer; background: transparent; transition: all 0.15s; }
+.nav-pill.on { background: var(--green-pale); color: var(--green-deep); border-color: var(--green-light); }
+.nav-pill:hover:not(.on) { border-color: var(--green-light); color: var(--green-deep); }
+
+/* ─── PAGE LAYOUT: two-column main ─── */
+.page-body { display: grid; grid-template-columns: 420px 1fr; min-height: calc(100vh - 57px); }
+
+/* ─── LEFT COLUMN (input panel) ─── */
+.left-col { border-right: 0.5px solid var(--border); background: var(--bg-card); display: flex; flex-direction: column; }
+.left-section { padding: 20px 22px; border-bottom: 0.5px solid var(--border); }
+.left-section.subtle { background: var(--bg-subtle); }
+.eyebrow { font-family: var(--sans); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.eyebrow i { font-size: 13px; }
+
+/* ─── UPLOAD ─── */
+.upload-zone { border: 1.5px dashed var(--border-mid); border-radius: 12px; padding: 22px 16px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--bg-card); }
+.upload-zone:hover, .upload-zone.dragover { background: var(--green-xpale); border-color: var(--green-light); border-style: solid; }
+.upload-zone.uploaded { background: var(--green-pale); border-color: var(--green-mid); border-style: solid; }
+.upload-icon { font-size: 26px; color: var(--text-tertiary); display: block; margin-bottom: 8px; transition: color 0.2s; }
+.upload-zone:hover .upload-icon, .upload-zone.uploaded .upload-icon { color: var(--green-deep); }
+.upload-title { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.upload-sub { font-size: 11px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6; }
+.upload-formats { display: flex; justify-content: center; gap: 5px; flex-wrap: wrap; }
+.upload-fmt { font-size: 10px; padding: 2px 7px; border-radius: 4px; background: var(--bg-subtle); color: var(--text-secondary); border: 0.5px solid var(--border); }
+.upload-success { display: flex; align-items: center; gap: 8px; background: var(--green-pale); border: 0.5px solid var(--green-light); border-radius: 8px; padding: 10px 12px; margin-top: 10px; }
+.upload-success i { color: var(--green-deep); font-size: 16px; }
+.upload-success-name { font-size: 12px; font-weight: 500; color: var(--green-dark); }
+.upload-success-sub { font-size: 10px; color: var(--green-mid); }
+
+/* ─── COMPONENT SELECTOR ─── */
+.comp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.comp-card { border: 0.5px solid var(--border); border-radius: 10px; padding: 10px 6px 9px; cursor: pointer; text-align: center; background: var(--bg-card); transition: all 0.15s; }
+.comp-card:hover { border-color: var(--green-light); }
+.comp-card.on { border: 1.5px solid var(--green-deep); background: var(--green-pale); }
+.comp-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; margin: 0 auto 7px; }
+.ic-teal { background: #9FE1CB; color: #085041; }
+.ic-gray { background: #D3D1C7; color: #444441; }
+.ic-amber { background: #FAC775; color: #633806; }
+.ic-blue { background: #B5D4F4; color: #0C447C; }
+.ic-purple { background: #CECBF6; color: #26215C; }
+.comp-name { font-size: 11px; font-weight: 500; margin-bottom: 1px; }
+.comp-sub { font-size: 9px; color: var(--text-secondary); line-height: 1.3; }
+.comp-badge { display: inline-block; margin-top: 5px; font-size: 8px; padding: 1px 5px; border-radius: 20px; font-weight: 500; }
+.b-high { background: var(--red-pale); color: #993C1D; }
+.b-med { background: var(--amber-pale); color: #854F0B; }
+.b-low { background: #EAF3DE; color: #3B6D11; }
+
+/* ─── MATERIAL ADDER ─── */
+.mat-add-row { display: flex; gap: 7px; margin-bottom: 10px; align-items: center; }
+.mat-input { flex: 1; font-family: var(--sans); font-size: 12px; padding: 8px 11px; border: 0.5px solid var(--border); border-radius: 8px; background: var(--bg-card); color: var(--text-primary); outline: none; transition: border-color 0.15s; }
+.mat-input:focus { border-color: var(--green-light); }
+.mat-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.mat-chip-btn { font-size: 10px; padding: 3px 9px; border-radius: 20px; border: 0.5px solid var(--border-mid); background: var(--bg-card); color: var(--text-secondary); cursor: pointer; transition: all 0.15s; }
+.mat-chip-btn:hover { background: var(--green-pale); border-color: var(--green-light); color: var(--green-deep); }
+.mat-chip-btn.selected { background: var(--green-pale); border-color: var(--green-deep); color: var(--green-deep); font-weight: 500; }
+.added-mats { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; min-height: 26px; }
+.added-mat { display: flex; align-items: center; gap: 5px; font-size: 11px; padding: 3px 9px; border-radius: 20px; background: var(--green-pale); border: 0.5px solid var(--green-light); color: var(--green-dark); }
+.added-mat button { background: none; border: none; cursor: pointer; color: var(--green-mid); font-size: 12px; line-height: 1; padding: 0; display: flex; }
+
+.btn-primary { font-family: var(--sans); font-size: 11px; padding: 7px 14px; background: var(--green-deep); color: var(--green-pale); border-radius: 20px; border: none; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; }
+.btn-primary:hover { opacity: 0.85; }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-ghost { font-family: var(--sans); font-size: 11px; padding: 7px 13px; background: transparent; color: var(--text-secondary); border-radius: 20px; border: 0.5px solid var(--border); cursor: pointer; }
+.btn-ghost:hover { border-color: var(--border-mid); }
+
+/* ─── RIGHT COLUMN (analysis) ─── */
+.right-col { display: flex; flex-direction: column; overflow: hidden; }
+
+/* ─── SECTION WRAPPER ─── */
+.section { padding: 20px 24px; border-bottom: 0.5px solid var(--border); }
+.section.subtle { background: var(--bg-subtle); }
+.section-title { font-family: var(--serif); font-size: 15px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.section-title i { font-size: 16px; color: var(--green-deep); font-style: normal; }
+
+/* ─── THREE-COLUMN COMPARISON ─── */
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 0.5px solid var(--border); }
+.col-panel { padding: 18px 20px; border-right: 0.5px solid var(--border); }
+.col-panel:last-child { border-right: none; }
+.col-header { padding-bottom: 12px; border-bottom: 0.5px solid var(--border); margin-bottom: 12px; }
+.col-num { font-family: var(--serif); font-size: 9px; font-weight: 400; color: var(--text-tertiary); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px; }
+.col-title { font-family: var(--serif); font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.col-title.green { color: var(--green-deep); }
+
+/* column 1 - user materials */
+.user-mat-item { border: 0.5px solid var(--border); border-radius: 9px; padding: 10px 12px; margin-bottom: 8px; }
+.user-mat-name { font-size: 12px; font-weight: 500; margin-bottom: 7px; display: flex; align-items: center; gap: 6px; }
+.mat-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.mat-metrics { display: flex; flex-direction: column; gap: 4px; }
+.mat-metric { display: flex; justify-content: space-between; align-items: center; font-size: 10px; }
+.mat-metric-label { color: var(--text-secondary); }
+.mat-metric-val { font-weight: 500; }
+.metric-bar { height: 3px; border-radius: 2px; background: var(--bg-subtle); margin-top: 2px; overflow: hidden; }
+.metric-bar-fill { height: 100%; border-radius: 2px; }
+.mf-red { background: var(--red); }
+.mf-amber { background: var(--amber); }
+.mf-green { background: var(--green-mid); }
+.mf-teal { background: var(--green-deep); }
+.mf-blue { background: var(--blue); }
+
+/* column 2 - AI alternatives */
+.alt-card2 { background: var(--bg-subtle); border: 0.5px solid transparent; border-radius: 9px; padding: 10px 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+.alt-card2:hover, .alt-card2.on { border-color: var(--green-light); background: var(--green-xpale); }
+.alt-top { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+.alt-dot2 { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.alt-name2 { font-size: 12px; font-weight: 500; flex: 1; }
+.alt-saving { font-size: 10px; font-weight: 600; color: var(--green-deep); }
+.alt-why { font-size: 10px; color: var(--text-secondary); line-height: 1.5; margin-top: 3px; }
+.alt-region-tag { display: inline-flex; align-items: center; gap: 3px; font-size: 9px; padding: 2px 6px; border-radius: 4px; background: var(--blue-pale); color: var(--blue); margin-top: 5px; }
+
+/* column 3 - sustainability profile */
+.carbon-row2 { margin-bottom: 8px; }
+.carbon-meta2 { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-secondary); margin-bottom: 3px; }
+.carbon-meta2 span:last-child { font-weight: 500; }
+.bar-track { height: 5px; border-radius: 3px; background: var(--bg-subtle); overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+.bf-red { background: var(--red); }
+.bf-green { background: #639922; }
+.bf-amber { background: var(--amber); }
+.bf-teal { background: var(--green-mid); }
+.saving-row { display: flex; align-items: baseline; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 0.5px solid var(--border); }
+.saving-num { font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--green-deep); }
+.saving-desc { font-size: 10px; color: var(--text-secondary); line-height: 1.6; }
+.circ-mini-grid { display: flex; flex-direction: column; gap: 7px; margin-top: 12px; padding-top: 12px; border-top: 0.5px solid var(--border); }
+.circ-mini-row { font-size: 10px; }
+.circ-mini-label { color: var(--text-secondary); display: flex; justify-content: space-between; margin-bottom: 2px; }
+.lifecycle-chip { font-size: 9px; padding: 2px 7px; border-radius: 4px; font-weight: 500; }
+.lc-good { background: #EAF3DE; color: #3B6D11; }
+.lc-med { background: var(--amber-pale); color: #854F0B; }
+.lc-low { background: var(--red-pale); color: #993C1D; }
+
+/* ─── SUSTAINABILITY INSIGHTS ─── */
+.insights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.insight-card { border: 0.5px solid var(--border); border-radius: 10px; padding: 13px; }
+.insight-ico-wrap { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; margin-bottom: 8px; }
+.ii-teal { background: var(--green-pale); color: var(--green-deep); }
+.ii-blue { background: var(--blue-pale); color: var(--blue); }
+.ii-amber { background: var(--amber-pale); color: #854F0B; }
+.ii-purple { background: var(--purple-pale); color: var(--purple); }
+.ii-green { background: #EAF3DE; color: #3B6D11; }
+.ii-gray { background: var(--bg-subtle); color: var(--text-secondary); }
+.insight-title { font-size: 12px; font-weight: 500; margin-bottom: 4px; }
+.insight-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.6; }
+.insight-tag { display: inline-block; margin-top: 5px; font-size: 9px; padding: 2px 7px; border-radius: 4px; }
+.it-teal { background: var(--green-pale); color: var(--green-dark); }
+.it-blue { background: var(--blue-pale); color: var(--blue); }
+.it-amber { background: var(--amber-pale); color: #854F0B; }
+.it-purple { background: var(--purple-pale); color: var(--purple); }
+
+/* carbon emissions table */
+.carbon-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.carbon-table th { text-align: left; font-weight: 500; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); padding: 0 0 7px; border-bottom: 0.5px solid var(--border); }
+.carbon-table td { padding: 8px 0; border-bottom: 0.5px solid var(--border); vertical-align: middle; }
+.carbon-table tr:last-child td { border-bottom: none; }
+.ct-mat { font-weight: 500; }
+.ct-val { font-size: 10px; color: var(--text-secondary); }
+.ct-bar-wrap { width: 70px; }
+
+/* vernacular precedents */
+.prec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.prec-card { border: 0.5px solid var(--border); border-radius: 9px; overflow: hidden; cursor: pointer; transition: border-color 0.15s; }
+.prec-card:hover { border-color: var(--green-light); }
+.prec-img { height: 64px; display: flex; align-items: center; justify-content: center; font-size: 26px; }
+.prec-body { padding: 8px 10px; }
+.prec-name { font-size: 11px; font-weight: 500; margin-bottom: 2px; }
+.prec-loc { font-size: 9px; color: var(--text-secondary); margin-bottom: 4px; }
+.prec-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+.prec-tag { font-size: 8px; padding: 1px 5px; border-radius: 3px; background: var(--green-pale); color: var(--green-dark); }
+.prec-stat { font-size: 9px; color: var(--green-deep); margin-top: 3px; font-weight: 500; }
+.prec-deva { font-family: var(--deva); font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
+
+/* emerging materials */
+.em-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
+.em-card { border: 0.5px solid var(--border); border-radius: 9px; padding: 12px; display: flex; gap: 10px; }
+.em-ico { width: 32px; height: 32px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.ei-teal { background: var(--green-pale); color: var(--green-deep); }
+.ei-blue { background: var(--blue-pale); color: var(--blue); }
+.ei-amber { background: var(--amber-pale); color: #854F0B; }
+.ei-purple { background: var(--purple-pale); color: var(--purple); }
+.em-title { font-size: 12px; font-weight: 500; margin-bottom: 3px; }
+.em-desc { font-size: 10px; color: var(--text-secondary); line-height: 1.5; }
+.em-trl { display: inline-block; margin-top: 4px; font-size: 9px; padding: 2px 6px; border-radius: 4px; background: var(--purple-pale); color: #3C3489; }
+.em-avail { background: #EAF3DE; color: #27500A; }
+
+/* research list */
+.research-list { display: flex; flex-direction: column; gap: 7px; }
+.research-item { display: flex; align-items: flex-start; gap: 9px; padding: 10px 12px; border: 0.5px solid var(--border); border-radius: 8px; cursor: pointer; transition: border-color 0.15s; }
+.research-item:hover { border-color: var(--green-light); }
+.r-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+.r-title { font-size: 11px; font-weight: 500; margin-bottom: 2px; }
+.r-meta { font-size: 9px; color: var(--text-secondary); display: flex; gap: 7px; flex-wrap: wrap; }
+.r-tag { display: inline-block; font-size: 8px; padding: 1px 5px; border-radius: 3px; background: var(--bg-subtle); color: var(--text-secondary); }
+.r-action { display: flex; align-items: center; gap: 3px; font-size: 9px; color: var(--blue); margin-top: 2px; }
+
+/* community */
+.contrib-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 12px; }
+.contrib-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--bg-subtle); border-radius: 7px; }
+.contrib-av { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; flex-shrink: 0; }
+.av-teal { background: #9FE1CB; color: #085041; }
+.av-blue { background: #B5D4F4; color: #0C447C; }
+.av-amber { background: #FAC775; color: #633806; }
+.av-purple { background: #CECBF6; color: #26215C; }
+.contrib-name { font-size: 11px; font-weight: 500; }
+.contrib-type { font-size: 10px; color: var(--text-secondary); }
+.contrib-time { font-size: 10px; color: var(--text-tertiary); margin-left: auto; }
+
+/* ─── EMPTY STATE ─── */
+.empty-state { text-align: center; padding: 40px 24px; }
+.empty-state i { font-size: 36px; color: var(--text-tertiary); display: block; margin-bottom: 12px; }
+.empty-state-title { font-family: var(--serif); font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text-secondary); }
+.empty-state-text { font-size: 12px; color: var(--text-tertiary); line-height: 1.6; }
+
+/* divider */
+.divider-label { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.divider-label span { font-size: 10px; color: var(--text-tertiary); white-space: nowrap; }
+.divider-line { flex: 1; height: 0.5px; background: var(--border); }
+
+/* community upload zone inside right col */
+.upload-zone-sm { border: 1px dashed var(--border-mid); border-radius: 10px; padding: 18px 14px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--bg-card); }
+.upload-zone-sm:hover { background: var(--green-xpale); border-color: var(--green-light); }
+
+/* footer */
+.footer-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 24px; background: var(--bg-subtle); border-top: 0.5px solid var(--border); grid-column: 1 / -1; }
+.footer-left { font-size: 11px; color: var(--text-secondary); }
+
+/* active bar */
+.active-bar { display: none; align-items: center; gap: 8px; padding: 8px 24px; background: var(--green-pale); border-bottom: 0.5px solid var(--green-light); font-size: 11px; color: var(--green-dark); }
+.active-bar i { font-size: 13px; color: var(--green-deep); }
+.active-bar.show { display: flex; }
+
+/* ─── OVERLAY PANELS (Materials DB, Circular Economy) ─── */
+.overlay-panel { display: none; position: fixed; top: 57px; left: 420px; right: 0; bottom: 0; background: var(--bg); z-index: 50; overflow-y: auto; }
+.overlay-panel.show { display: block; }
+.overlay-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 0.5px solid var(--border); background: var(--bg-card); position: sticky; top: 0; z-index: 10; }
+.overlay-title { font-family: var(--serif); font-size: 18px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 10px; }
+.overlay-title i { font-size: 18px; color: var(--green-deep); }
+.overlay-subtitle { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+.overlay-close { font-family: var(--sans); font-size: 11px; padding: 6px 14px; border-radius: 20px; border: 0.5px solid var(--border); cursor: pointer; background: transparent; color: var(--text-secondary); }
+.overlay-close:hover { border-color: var(--border-mid); color: var(--text-primary); }
+.overlay-body { padding: 24px 28px; }
+.overlay-search-bar { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
+.overlay-search-inp { flex: 1; font-family: var(--sans); font-size: 13px; padding: 10px 14px; border: 0.5px solid var(--border); border-radius: 10px; background: var(--bg-card); color: var(--text-primary); outline: none; }
+.overlay-search-inp:focus { border-color: var(--green-light); }
+.mat-db-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.mat-db-card { border: 0.5px solid var(--border); border-radius: 12px; padding: 16px; background: var(--bg-card); transition: border-color 0.15s; }
+.mat-db-card:hover { border-color: var(--green-light); }
+.mat-db-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+.mat-db-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.mat-db-category { font-size: 10px; padding: 2px 8px; border-radius: 20px; background: var(--green-pale); color: var(--green-dark); margin-top: 3px; display: inline-block; }
+.mat-db-carbon { font-family: var(--serif); font-size: 15px; font-weight: 700; color: var(--green-deep); }
+.mat-db-carbon-label { font-size: 9px; color: var(--text-tertiary); }
+.mat-db-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 10px; }
+.mat-db-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.mat-db-tag { font-size: 9px; padding: 2px 7px; border-radius: 4px; background: var(--bg-subtle); color: var(--text-secondary); border: 0.5px solid var(--border); }
+.mat-db-projects { font-size: 10px; color: var(--text-tertiary); display: flex; align-items: center; gap: 4px; }
+.mat-db-link { font-size: 10px; color: var(--blue); display: flex; align-items: center; gap: 3px; cursor: pointer; margin-top: 6px; text-decoration: none; }
+.mat-db-link:hover { text-decoration: underline; }
+.circ-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.circ-card { border: 0.5px solid var(--border); border-radius: 12px; padding: 16px; background: var(--bg-card); transition: border-color 0.15s; }
+.circ-card:hover { border-color: var(--green-light); }
+.circ-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.circ-ico { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.circ-card-title { font-size: 13px; font-weight: 600; }
+.circ-card-sub { font-size: 10px; color: var(--text-secondary); margin-top: 1px; }
+.circ-score-row { display: flex; gap: 12px; margin-bottom: 10px; }
+.circ-score-item { flex: 1; }
+.circ-score-label { font-size: 9px; color: var(--text-tertiary); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+.circ-score-val { font-family: var(--serif); font-size: 16px; font-weight: 700; }
+.circ-score-bar { height: 4px; border-radius: 2px; background: var(--bg-subtle); overflow: hidden; margin-top: 2px; }
+.circ-score-fill { height: 100%; border-radius: 2px; background: var(--green-mid); transition: width 0.6s ease; }
+.circ-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
+.circ-strategies { display: flex; flex-wrap: wrap; gap: 4px; }
+.circ-strategy { font-size: 9px; padding: 2px 8px; border-radius: 4px; background: var(--green-pale); color: var(--green-dark); border: 0.5px solid var(--green-light); }
+.overlay-section-title { font-family: var(--serif); font-size: 14px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 7px; color: var(--text-primary); }
+.overlay-section-title i { color: var(--green-deep); }
+.loading-state { display: flex; align-items: center; justify-content: center; padding: 60px; flex-direction: column; gap: 12px; color: var(--text-tertiary); }
+.loading-state i { font-size: 28px; }
+.loading-spinner { width: 28px; height: 28px; border: 2px solid var(--border); border-top-color: var(--green-mid); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="logo">
+    <span class="logo-name">SROT</span>
+    <span class="logo-deva">स्रोत</span>
+    <span class="logo-tag">· Material intelligence</span>
+  </div>
+  <div class="nav-pills">
+    <div class="nav-pill on" onclick="navClick(this,'analyse')">Analyse</div>
+    <div class="nav-pill" onclick="navClick(this,'materials-db')">Materials DB</div>
+    <div class="nav-pill" onclick="navClick(this,'circular-economy')">Circular economy</div>
+    <div class="nav-pill">Emerging</div>
+    <div class="nav-pill">Research</div>
+    <div class="nav-pill">Community</div>
+  </div>
+</div>
+
+<!-- PAGE BODY -->
+<div class="page-body">
+
+  <!-- ═══════════════════════════════ LEFT COLUMN ═══════════════════════════════ -->
+  <div class="left-col">
+
+    <!-- UPLOAD -->
+    <div class="left-section">
+      <div class="eyebrow"><i class="ti ti-upload"></i> Upload model</div>
+      <div class="upload-zone" id="upload-zone" onclick="simulateUpload()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')">
+        <i class="ti ti-file-3d upload-icon" id="upload-icon"></i>
+        <div class="upload-title" id="upload-title">Drop your building model here</div>
+        <div class="upload-sub" id="upload-sub">Upload an IFC, Revit, or SketchUp file to begin material analysis. Your model stays private and is not stored.</div>
+        <div class="upload-formats">
+          <span class="upload-fmt">.ifc</span>
+          <span class="upload-fmt">.rvt</span>
+          <span class="upload-fmt">.skp</span>
+          <span class="upload-fmt">.gbXML</span>
+          <span class="upload-fmt">.3dm</span>
+          <span class="upload-fmt">.obj</span>
+        </div>
+      </div>
+      <div class="upload-success" id="upload-success" style="display:none">
+        <i class="ti ti-circle-check"></i>
+        <div>
+          <div class="upload-success-name" id="upload-filename">SiteA_Block2_v4.ifc</div>
+          <div class="upload-success-sub">Model parsed · 847 components · 12 material zones</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPONENT SELECTOR -->
+    <div class="left-section subtle">
+      <div class="eyebrow"><i class="ti ti-layout-grid"></i> Building component</div>
+      <div class="comp-grid">
+        <div class="comp-card on" id="comp-wall" onclick="selectComp('wall')">
+          <div class="comp-icon ic-teal"><i class="ti ti-square"></i></div>
+          <div class="comp-name">Wall</div>
+          <div class="comp-sub">External, internal</div>
+          <span class="comp-badge b-high">High carbon</span>
+        </div>
+        <div class="comp-card" id="comp-roof" onclick="selectComp('roof')">
+          <div class="comp-icon ic-gray"><i class="ti ti-home"></i></div>
+          <div class="comp-name">Roof</div>
+          <div class="comp-sub">Cover, insulation</div>
+          <span class="comp-badge b-med">Medium</span>
+        </div>
+        <div class="comp-card" id="comp-floor" onclick="selectComp('floor')">
+          <div class="comp-icon ic-amber"><i class="ti ti-layout-bottombar"></i></div>
+          <div class="comp-name">Floor</div>
+          <div class="comp-sub">Slab, screed</div>
+          <span class="comp-badge b-med">Medium</span>
+        </div>
+        <div class="comp-card" id="comp-structure" onclick="selectComp('structure')">
+          <div class="comp-icon ic-blue"><i class="ti ti-crane"></i></div>
+          <div class="comp-name">Structure</div>
+          <div class="comp-sub">Columns, beams</div>
+          <span class="comp-badge b-high">High carbon</span>
+        </div>
+        <div class="comp-card" id="comp-facade" onclick="selectComp('facade')">
+          <div class="comp-icon ic-purple"><i class="ti ti-building"></i></div>
+          <div class="comp-name">Facade</div>
+          <div class="comp-sub">Cladding, curtain</div>
+          <span class="comp-badge b-high">High carbon</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATERIAL SELECTOR -->
+    <div class="left-section">
+      <div class="eyebrow"><i class="ti ti-package"></i> Add your materials</div>
+      <div class="mat-add-row">
+        <input class="mat-input" id="mat-input" type="text" placeholder="Type a material (e.g. rammed earth…)" onkeydown="if(event.key==='Enter')addMaterial()">
+        <button class="btn-primary" onclick="addMaterial()">Add</button>
+      </div>
+      <div style="margin-bottom:9px">
+        <div style="font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:7px">Common US materials — tap to add</div>
+        <div class="mat-chips" id="mat-chips">
+          <!-- Wall -->
+          <button class="mat-chip-btn" data-comp="wall" onclick="toggleChip(this,'Wood Stud Framing')">Wood Stud Framing</button>
+          <button class="mat-chip-btn" data-comp="wall" onclick="toggleChip(this,'CMU Block')">CMU Block</button>
+          <button class="mat-chip-btn" data-comp="wall" onclick="toggleChip(this,'Brick Veneer')">Brick Veneer</button>
+          <button class="mat-chip-btn" data-comp="wall" onclick="toggleChip(this,'Gypsum Drywall')">Gypsum Drywall</button>
+          <!-- Roof -->
+          <button class="mat-chip-btn" data-comp="roof" onclick="toggleChip(this,'Asphalt Shingles')">Asphalt Shingles</button>
+          <button class="mat-chip-btn" data-comp="roof" onclick="toggleChip(this,'TPO Membrane')">TPO Membrane</button>
+          <button class="mat-chip-btn" data-comp="roof" onclick="toggleChip(this,'Metal Roofing')">Metal Roofing</button>
+          <button class="mat-chip-btn" data-comp="roof" onclick="toggleChip(this,'Fiberglass Insulation')">Fiberglass Insulation</button>
+          <!-- Floor -->
+          <button class="mat-chip-btn" data-comp="floor" onclick="toggleChip(this,'Concrete Slab')">Concrete Slab</button>
+          <button class="mat-chip-btn" data-comp="floor" onclick="toggleChip(this,'Engineered Wood')">Engineered Wood</button>
+          <button class="mat-chip-btn" data-comp="floor" onclick="toggleChip(this,'Ceramic Tile')">Ceramic Tile</button>
+          <button class="mat-chip-btn" data-comp="floor" onclick="toggleChip(this,'Carpet')">Carpet</button>
+          <!-- Structure -->
+          <button class="mat-chip-btn" data-comp="structure" onclick="toggleChip(this,'Structural Steel')">Structural Steel</button>
+          <button class="mat-chip-btn" data-comp="structure" onclick="toggleChip(this,'Cast-in-Place Concrete')">Cast-in-Place Concrete</button>
+          <button class="mat-chip-btn" data-comp="structure" onclick="toggleChip(this,'Glulam Timber')">Glulam Timber</button>
+          <button class="mat-chip-btn" data-comp="structure" onclick="toggleChip(this,'Cold-Formed Steel')">Cold-Formed Steel</button>
+          <!-- Facade -->
+          <button class="mat-chip-btn" data-comp="facade" onclick="toggleChip(this,'Fiber Cement Siding')">Fiber Cement Siding</button>
+          <button class="mat-chip-btn" data-comp="facade" onclick="toggleChip(this,'Aluminum Curtain Wall')">Aluminum Curtain Wall</button>
+          <button class="mat-chip-btn" data-comp="facade" onclick="toggleChip(this,'Vinyl Siding')">Vinyl Siding</button>
+          <button class="mat-chip-btn" data-comp="facade" onclick="toggleChip(this,'EIFS / Stucco')">EIFS / Stucco</button>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--text-tertiary);margin-bottom:5px">Added materials</div>
+      <div class="added-mats" id="added-mats">
+        <span style="font-size:11px;color:var(--text-tertiary);padding:3px 0" id="mats-placeholder">No materials added yet</span>
+      </div>
+      <div style="margin-top:16px;display:flex;justify-content:flex-end;gap:8px">
+        <button class="btn-ghost" onclick="resetAll()">Reset</button>
+        <button class="btn-primary" id="analyse-btn" onclick="runAnalysis()" disabled>Analyse →</button>
+      </div>
+    </div>
+
+    <!-- COMMUNITY KNOWLEDGE -->
+    <div class="left-section subtle" style="flex:1">
+      <div class="eyebrow"><i class="ti ti-users"></i> Community</div>
+      <div class="upload-zone-sm">
+        <i class="ti ti-upload" style="font-size:18px;color:var(--text-tertiary);display:block;margin-bottom:6px"></i>
+        <div style="font-size:12px;font-weight:500;margin-bottom:4px">Share your data</div>
+        <div style="font-size:10px;color:var(--text-secondary);line-height:1.6">Upload papers, case studies, EPDs, or built project records to the SROT knowledge base.</div>
+      </div>
+      <div class="divider-label" style="margin-top:14px">
+        <div class="divider-line"></div>
+        <span>Recent contributions</span>
+        <div class="divider-line"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="contrib-item">
+          <div class="contrib-av av-teal">AR</div>
+          <div><div class="contrib-name">Aarav Rao</div><div class="contrib-type">LCA: Bamboo structural, India</div></div>
+          <div class="contrib-time">2h ago</div>
+        </div>
+        <div class="contrib-item">
+          <div class="contrib-av av-blue">SK</div>
+          <div><div class="contrib-name">Sara Kovač</div><div class="contrib-type">Built: Rammed earth, Croatia</div></div>
+          <div class="contrib-time">5h ago</div>
+        </div>
+        <div class="contrib-item">
+          <div class="contrib-av av-amber">JO</div>
+          <div><div class="contrib-name">James Osei</div><div class="contrib-type">Innovation: Mycelium pilot, Ghana</div></div>
+          <div class="contrib-time">1d ago</div>
+        </div>
+        <div class="contrib-item">
+          <div class="contrib-av av-purple">ML</div>
+          <div><div class="contrib-name">Meera Lal</div><div class="contrib-type">Vernacular: Rajasthani stone, India</div></div>
+          <div class="contrib-time">2d ago</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════ RIGHT COLUMN ═══════════════════════════════ -->
+  <div class="right-col">
+
+    <!-- ACTIVE BAR -->
+    <div class="active-bar" id="active-bar">
+      <i class="ti ti-check"></i>
+      <span id="active-bar-text">Analysing: Wall · Concrete, Brick — tap an alternative to explore circularity</span>
+    </div>
+
+    <!-- EMPTY STATE (shown before analysis) -->
+    <div id="empty-state" style="flex:1;display:flex;align-items:center;justify-content:center;">
+      <div class="empty-state">
+        <i class="ti ti-leaf"></i>
+        <div class="empty-state-title">This facade produces X kgCO₂e.</div>
+        <div class="empty-state-text" style="max-width:420px;margin:0 auto">
+          Through SROT you get: <strong style="color:var(--green-deep)">5 lower-carbon alternatives</strong> — buildings that have used them, lifecycle data, circularity scores, and your estimated savings if you switch.<br><br>
+          Select a building component, add your materials, and click <em>Analyse</em> to begin.
+        </div>
+      </div>
+    </div>
+
+    <!-- THREE COLUMN COMPARISON (hidden until analysis) -->
+    <div id="screen-analysis" style="display:none">
+      <div class="three-col">
+        <!-- COLUMN 1: USER MATERIALS -->
+        <div class="col-panel">
+          <div class="col-header">
+            <div class="col-num">Column 01</div>
+            <div class="col-title">Your materials</div>
+            <div style="font-size:10px;color:var(--text-secondary);margin-top:2px">What you are building with</div>
+          </div>
+          <div id="user-mat-list"></div>
+        </div>
+        <!-- COLUMN 2: AI ALTERNATIVES -->
+        <div class="col-panel">
+          <div class="col-header">
+            <div class="col-num">Column 02</div>
+            <div class="col-title green">5 lower-carbon alternatives</div>
+            <div style="font-size:10px;color:var(--text-secondary);margin-top:2px">Buildings that used them · lifecycle data · circularity scores · estimated savings</div>
+          </div>
+          <div id="alt-list2"></div>
+        </div>
+        <!-- COLUMN 3: SUSTAINABILITY PROFILE -->
+        <div class="col-panel">
+          <div class="col-header">
+            <div class="col-num">Column 03</div>
+            <div class="col-title">Sustainability profile</div>
+            <div style="font-size:10px;color:var(--text-secondary);margin-top:2px">Carbon footprint & circular economy</div>
+          </div>
+          <div class="eyebrow" style="margin-bottom:8px"><i class="ti ti-chart-bar"></i> Carbon comparison (kgCO₂e/m²)</div>
+          <div id="carbon-bars2"></div>
+          <div class="saving-row">
+            <div class="saving-num" id="saving-num2">—</div>
+            <div class="saving-desc" id="saving-desc2">Select an alternative to see potential carbon saving</div>
+          </div>
+          <div id="circ-mini" style="display:none">
+            <div class="circ-mini-grid" id="circ-mini-grid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUSTAINABILITY INSIGHTS (hidden until analysis) -->
+    <div id="screen-insights" style="display:none">
+
+      <!-- CARBON TABLE -->
+      <div class="section">
+        <div class="section-title"><i class="ti ti-leaf"></i> Carbon emissions by material</div>
+        <table class="carbon-table">
+          <thead>
+            <tr>
+              <th style="width:150px">Material</th>
+              <th>Embodied carbon</th>
+              <th>Lifecycle impact</th>
+              <th style="width:80px">Visual</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody id="carbon-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- INSIGHTS GRID -->
+      <div class="section subtle">
+        <div class="section-title"><i class="ti ti-chart-dots"></i> Sustainability insights</div>
+        <div class="insights-grid">
+          <div class="insight-card">
+            <div class="insight-ico-wrap ii-teal"><i class="ti ti-recycle"></i></div>
+            <div class="insight-title">Circular economy impact</div>
+            <div class="insight-desc">Your selected materials have mixed circular potential. Steel scores highest for recyclability (95%+). Mass timber and reclaimed wood lead on reuse. Concrete and vinyl perform poorly at end-of-life — prioritize designing for disassembly.</div>
+            <span class="insight-tag it-teal">Reuse · Recycle · Recover</span>
+          </div>
+          <div class="insight-card">
+            <div class="insight-ico-wrap ii-amber"><i class="ti ti-tool"></i></div>
+            <div class="insight-title">US supply chain availability</div>
+            <div class="insight-desc">Most low-carbon alternatives (EAF steel, fly ash concrete, FSC timber, mineral wool insulation) are stocked by major US distributors — Ferguson, Builders FirstSource, and regional lumber yards. Lead times are typically the same as conventional materials.</div>
+            <span class="insight-tag it-amber">Available nationally</span>
+          </div>
+          <div class="insight-card">
+            <div class="insight-ico-wrap ii-blue"><i class="ti ti-map-2"></i></div>
+            <div class="insight-title">Regional climate performance</div>
+            <div class="insight-desc">US climate zones 1–3 (Sun Belt) benefit most from thermal mass, cool roofs, and high-R walls. Zones 5–7 (Northeast, Midwest, Mountain) prioritize airtightness and continuous insulation. Match your material choices to ASHRAE 90.1 zone requirements for maximum performance.</div>
+            <span class="insight-tag it-blue">Climate-responsive design</span>
+          </div>
+          <div class="insight-card">
+            <div class="insight-ico-wrap ii-purple"><i class="ti ti-building-arch"></i></div>
+            <div class="insight-title">Green building code & incentives</div>
+            <div class="insight-desc">IBC 2021 and IECC 2021 are now adopted in most US states. LEED, WELL, and Living Building Challenge projects routinely achieve 40–60% carbon reductions vs baseline. The IRA (2022) offers significant tax incentives for buildings meeting energy performance targets.</div>
+            <span class="insight-tag it-purple">Code-compliant pathways</span>
+          </div>
+          <div class="insight-card">
+            <div class="insight-ico-wrap ii-green"><i class="ti ti-map-pin"></i></div>
+            <div class="insight-title">Local availability & low-mile sourcing</div>
+            <div class="insight-desc">Mass timber from PNW or Southeast mills, brick from Midwest kilns, and recycled steel from regional mini-mills can significantly reduce transport carbon. Local sourcing within 500 miles is achievable for most structural materials across the continental US.</div>
+            <span class="insight-tag it-teal">Low-mile materials</span>
+          </div>
+          <div class="insight-card">
+            <div class="insight-ico-wrap ii-gray"><i class="ti ti-refresh"></i></div>
+            <div class="insight-title">Material lifecycle & reuse potential</div>
+            <div class="insight-desc">End-of-life recovery is highest for structural steel (95% recycling rate in the US), reclaimed brick, and mass timber (reuse or biomass energy). Vinyl, EIFS, and carpet have the weakest end-of-life story — consider designing these elements for replacement and upgrade.</div>
+            <span class="insight-tag it-teal">End-of-life planning</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- VERNACULAR PRECEDENTS -->
+      <div class="section">
+        <div class="section-title"><i class="ti ti-world"></i> Vernacular precedents & built projects</div>
+        <div class="prec-grid" id="prec-grid"></div>
+      </div>
+
+      <!-- EMERGING MATERIALS -->
+      <div class="section subtle">
+        <div class="section-title"><i class="ti ti-atom"></i> Emerging materials</div>
+        <div class="em-grid">
+          <div class="em-card">
+            <div class="em-ico ei-teal"><i class="ti ti-trees"></i></div>
+            <div>
+              <div class="em-title">Mass Timber (CLT / NLT / DLT)</div>
+              <div class="em-desc">Now code-approved to 18 stories in the US under IBC 2021. PNW and Southeast mills supply nationally. Over 1,000 US mass timber projects completed since 2015.</div>
+              <span class="em-trl em-avail">Commercially available · IBC compliant</span>
+            </div>
+          </div>
+          <div class="em-card">
+            <div class="em-ico ei-blue"><i class="ti ti-droplet"></i></div>
+            <div>
+              <div class="em-title">Low-Carbon Concrete (Portland-Limestone Cement)</div>
+              <div class="em-desc">ASTM C595 Type IL cement (15% limestone replacement) is now available from most US ready-mix plants. Reduces cement carbon by 10–15% with no mix redesign required.</div>
+              <span class="em-trl em-avail">Available at major US ready-mix plants</span>
+            </div>
+          </div>
+          <div class="em-card">
+            <div class="em-ico ei-amber"><i class="ti ti-recycle"></i></div>
+            <div>
+              <div class="em-title">Recycled-Content Insulation (Mineral Wool / Cellulose)</div>
+              <div class="em-desc">Rockwool (70% recycled) and blown cellulose (85% recycled newsprint) are available at every US building supplier. Same R-value as fiberglass at lower embodied carbon.</div>
+              <span class="em-trl em-avail">Nationally available · Widely specified</span>
+            </div>
+          </div>
+          <div class="em-card">
+            <div class="em-ico ei-purple"><i class="ti ti-flask"></i></div>
+            <div>
+              <div class="em-title">Carbon-Cured Concrete (CO₂ mineralization)</div>
+              <div class="em-desc">CarbonCure injects captured CO₂ into ready-mix concrete during batching — permanently mineralizing it into calcium carbonate. Reduces mix carbon by 5–10% with 500+ US plant licenses.</div>
+              <span class="em-trl">TRL 8–9 · 500+ US plants licensed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESEARCH FEED -->
+      <div class="section">
+        <div class="section-title"><i class="ti ti-file-text"></i> Live research feed</div>
+        <div class="research-list">
+          <div class="research-item">
+            <div class="r-dot" style="background:#1D9E75"></div>
+            <div style="flex:1">
+              <div class="r-title">Embodied carbon of traditional masonry vs reinforced concrete in South Asian mid-rise construction</div>
+              <div class="r-meta"><span>IIT Delhi · 2024</span><span class="r-tag">Embodied carbon</span><span class="r-tag">Peer reviewed</span><span class="r-tag">Open access</span></div>
+              <div class="r-action"><i class="ti ti-external-link"></i> View paper</div>
+            </div>
+          </div>
+          <div class="research-item">
+            <div class="r-dot" style="background:#185FA5"></div>
+            <div style="flex:1">
+              <div class="r-title">Circular economy strategies for masonry: reuse, reclaim, and recycle in South Asian contexts</div>
+              <div class="r-meta"><span>CEPT University · 2024</span><span class="r-tag">Circularity</span><span class="r-tag">Masonry</span><span class="r-tag">Open access</span></div>
+              <div class="r-action"><i class="ti ti-external-link"></i> View paper</div>
+            </div>
+          </div>
+          <div class="research-item">
+            <div class="r-dot" style="background:#534AB7"></div>
+            <div style="flex:1">
+              <div class="r-title">Vernacular earth construction revival: performance data from 2020–2025 projects</div>
+              <div class="r-meta"><span>Auroville Earth Institute · 2025</span><span class="r-tag">Earth construction</span><span class="r-tag">Vernacular</span><span class="r-tag">Community upload</span></div>
+              <div class="r-action"><i class="ti ti-external-link"></i> View paper</div>
+            </div>
+          </div>
+          <div class="research-item">
+            <div class="r-dot" style="background:#BA7517"></div>
+            <div style="flex:1">
+              <div class="r-title">Bamboo structural systems: lifecycle carbon and regional supply chain analysis</div>
+              <div class="r-meta"><span>UCL · 2024</span><span class="r-tag">Bamboo</span><span class="r-tag">LCA</span><span class="r-tag">Peer reviewed</span></div>
+              <div class="r-action"><i class="ti ti-external-link"></i> View paper</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- end screen-insights -->
+
+    <!-- FOOTER inside right col -->
+    <div class="footer-bar" style="margin-top:auto">
+      <div class="footer-left">SROT · Material intelligence platform · <span style="font-family:var(--deva);font-size:12px">स्रोत</span></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary" id="export-btn" style="display:none" onclick="alert('Export report — coming soon')">Export report</button>
+      </div>
+    </div>
+
+  </div>
+  <!-- end right-col -->
+
+</div>
+<!-- end page-body -->
+
+<!-- MATERIALS DB OVERLAY -->
+<div class="overlay-panel" id="panel-materials-db">
+  <div class="overlay-header">
+    <div>
+      <div class="overlay-title"><i class="ti ti-database"></i> Materials Database</div>
+      <div class="overlay-subtitle">Sustainable building materials sourced from live research — carbon data, lifecycle ratings, and real project references</div>
+    </div>
+    <button class="overlay-close" onclick="closeOverlay('panel-materials-db')">← Back to Analyse</button>
+  </div>
+  <div class="overlay-body">
+    <div class="overlay-search-bar">
+      <input class="overlay-search-inp" id="matdb-search" type="text" placeholder="Search materials, categories, or properties…" oninput="filterMatDB()">
+      <button class="btn-primary" onclick="loadMaterialsDB(true)"><i class="ti ti-refresh" style="font-size:11px"></i> Refresh from web</button>
+    </div>
+    <div class="overlay-section-title"><i class="ti ti-leaf"></i> Sustainable materials — live from research</div>
+    <div id="matdb-grid" class="mat-db-grid">
+      <div class="loading-state" style="grid-column:1/-1"><div class="loading-spinner"></div><span style="font-size:12px">Loading sustainable materials…</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CIRCULAR ECONOMY OVERLAY -->
+<div class="overlay-panel" id="panel-circular-economy">
+  <div class="overlay-header">
+    <div>
+      <div class="overlay-title"><i class="ti ti-recycle"></i> Circular Economy</div>
+      <div class="overlay-subtitle">Materials with high circularity potential — designed for reuse, recyclability, and end-of-life recovery</div>
+    </div>
+    <button class="overlay-close" onclick="closeOverlay('panel-circular-economy')">← Back to Analyse</button>
+  </div>
+  <div class="overlay-body">
+    <div class="overlay-section-title"><i class="ti ti-recycle"></i> High-circularity materials — live from research</div>
+    <div id="circ-db-grid" class="circ-grid">
+      <div class="loading-state" style="grid-column:1/-1"><div class="loading-spinner"></div><span style="font-size:12px">Loading circularity data…</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── STATE ───
+let uploadDone = false;
+let activeComp = 'wall';
+let userMaterials = [];
+let activeAlt = null;
+
+// ─── MATERIAL DATA ───
+const MATERIAL_DATA = {
+  // WALL
+  'Wood Stud Framing':       { carbon: 35,  unit: 'kgCO₂e/m²', durability: 70, local: 85, reuse: 60,  lifecycle: 'high', color: '#639922', dot: '#639922' },
+  'CMU Block':               { carbon: 130, unit: 'kgCO₂e/m²', durability: 92, local: 80, reuse: 35,  lifecycle: 'med',  color: '#EF9F27', dot: '#9A9A96' },
+  'Brick Veneer':            { carbon: 95,  unit: 'kgCO₂e/m²', durability: 90, local: 75, reuse: 70,  lifecycle: 'high', color: '#EF9F27', dot: '#BA7517' },
+  'Gypsum Drywall':          { carbon: 40,  unit: 'kgCO₂e/m²', durability: 55, local: 90, reuse: 20,  lifecycle: 'low',  color: '#D85A30', dot: '#9A9A96' },
+  // ROOF
+  'Asphalt Shingles':        { carbon: 160, unit: 'kgCO₂e/m²', durability: 60, local: 70, reuse: 10,  lifecycle: 'low',  color: '#D85A30', dot: '#444441' },
+  'TPO Membrane':            { carbon: 110, unit: 'kgCO₂e/m²', durability: 72, local: 65, reuse: 15,  lifecycle: 'med',  color: '#EF9F27', dot: '#185FA5' },
+  'Metal Roofing':           { carbon: 75,  unit: 'kgCO₂e/m²', durability: 88, local: 60, reuse: 80,  lifecycle: 'high', color: '#3B6D11', dot: '#444441' },
+  'Fiberglass Insulation':   { carbon: 20,  unit: 'kgCO₂e/m²', durability: 50, local: 75, reuse: 10,  lifecycle: 'low',  color: '#D85A30', dot: '#9A9A96' },
+  // FLOOR
+  'Concrete Slab':           { carbon: 210, unit: 'kgCO₂e/m²', durability: 88, local: 75, reuse: 20,  lifecycle: 'low',  color: '#D85A30', dot: '#9A9A96' },
+  'Engineered Wood':         { carbon: 30,  unit: 'kgCO₂e/m²', durability: 72, local: 70, reuse: 65,  lifecycle: 'high', color: '#639922', dot: '#639922' },
+  'Ceramic Tile':            { carbon: 55,  unit: 'kgCO₂e/m²', durability: 90, local: 50, reuse: 55,  lifecycle: 'high', color: '#3B6D11', dot: '#185FA5' },
+  'Carpet':                  { carbon: 45,  unit: 'kgCO₂e/m²', durability: 30, local: 60, reuse: 10,  lifecycle: 'low',  color: '#D85A30', dot: '#9A9A96' },
+  // STRUCTURE
+  'Structural Steel':        { carbon: 280, unit: 'kgCO₂e/m²', durability: 95, local: 55, reuse: 85,  lifecycle: 'med',  color: '#D85A30', dot: '#444441' },
+  'Cast-in-Place Concrete':  { carbon: 240, unit: 'kgCO₂e/m²', durability: 90, local: 80, reuse: 15,  lifecycle: 'low',  color: '#D85A30', dot: '#9A9A96' },
+  'Glulam Timber':           { carbon: 40,  unit: 'kgCO₂e/m²', durability: 78, local: 72, reuse: 75,  lifecycle: 'high', color: '#639922', dot: '#639922' },
+  'Cold-Formed Steel':       { carbon: 200, unit: 'kgCO₂e/m²', durability: 85, local: 60, reuse: 80,  lifecycle: 'med',  color: '#EF9F27', dot: '#444441' },
+  // FACADE
+  'Fiber Cement Siding':     { carbon: 65,  unit: 'kgCO₂e/m²', durability: 80, local: 70, reuse: 25,  lifecycle: 'med',  color: '#EF9F27', dot: '#9A9A96' },
+  'Aluminum Curtain Wall':   { carbon: 260, unit: 'kgCO₂e/m²', durability: 88, local: 45, reuse: 85,  lifecycle: 'med',  color: '#D85A30', dot: '#185FA5' },
+  'Vinyl Siding':            { carbon: 85,  unit: 'kgCO₂e/m²', durability: 65, local: 65, reuse: 5,   lifecycle: 'low',  color: '#D85A30', dot: '#534AB7' },
+  'EIFS / Stucco':           { carbon: 50,  unit: 'kgCO₂e/m²', durability: 60, local: 80, reuse: 10,  lifecycle: 'low',  color: '#EF9F27', dot: '#9A9A96' },
+};
+
+const ALT_DATA = {
+  // WALL alternatives
+  'Wood Stud Framing': [
+    { name:'Cross-Laminated Timber (CLT)', saving:'−20%', why:'CLT panels replace stud framing and sheathing in one shot. Sequesters carbon for the building\'s lifetime. Available from PNW and Southern US mills — Freres, SmartLam, and DR Johnson supply nationally.', region:'Pacific Northwest · Southeast US', dot:'#639922', reuse:70, recycle:75, recover:90 },
+    { name:'Structural Insulated Panels (SIPs)', saving:'−18%', why:'Factory-built wall system with integrated insulation. Faster on-site construction, less waste, and superior air-tightness vs stud framing. Widely available across the US.', region:'National · US', dot:'#185FA5', reuse:40, recycle:35, recover:30 },
+  ],
+  'CMU Block': [
+    { name:'Autoclaved Aerated Concrete (AAC)', saving:'−35%', why:'AAC has ~60% lower density than CMU, cutting embodied carbon significantly. Provides superior insulation (R-1.25/inch). Made in US by Aercon and Ytong — available nationally.', region:'Southeast US · National', dot:'#185FA5', reuse:30, recycle:40, recover:35 },
+    { name:'Insulated Concrete Forms (ICF)', saving:'−22%', why:'ICF uses recycled EPS forms as permanent insulation around cast concrete, reducing total wall thickness and improving thermal performance by 50% vs CMU walls.', region:'National · US', dot:'#1D9E75', reuse:25, recycle:55, recover:40 },
+    { name:'Rammed Earth (stabilized)', saving:'−68%', why:'Stabilized rammed earth is code-compliant in many US states. Near-zero embodied carbon with exceptional thermal mass. Strong precedent in the American Southwest — Arizona, New Mexico, California.', region:'Southwest US · California', dot:'#854F0B', reuse:85, recycle:90, recover:99 },
+  ],
+  'Brick Veneer': [
+    { name:'Reclaimed Brick', saving:'−85%', why:'Salvaged brick carries virtually no manufacturing carbon. Abundant in older US cities — Chicago common brick, Philadelphia brick. Specialist reclaimed suppliers in most metro areas.', region:'Midwest · Northeast US', dot:'#BA7517', reuse:95, recycle:80, recover:70 },
+    { name:'Fiber Cement Siding', saving:'−32%', why:'James Hardie and similar fiber cement products offer masonry-like aesthetics at 32% lower embodied carbon. Fire-resistant, dimensionally stable, and ubiquitous in US residential construction.', region:'National · US', dot:'#9A9A96', reuse:20, recycle:30, recover:25 },
+  ],
+  'Gypsum Drywall': [
+    { name:'Recycled-Content Drywall', saving:'−40%', why:'US Gypsum (USG) and CertainTeed offer drywall with 90–95% recycled synthetic gypsum from coal power plant scrubbers. Same performance, significantly lower extraction impact.', region:'National · US', dot:'#1D9E75', reuse:20, recycle:75, recover:40 },
+    { name:'Mass Timber Wall Panel', saving:'−55%', why:'Exposed CLT or NLT panels can replace drywall on interior walls while storing carbon. Growing US market with manufacturers in Oregon, Montana, and Alabama.', region:'Pacific Northwest · Southeast', dot:'#639922', reuse:75, recycle:70, recover:90 },
+  ],
+  // ROOF alternatives
+  'Asphalt Shingles': [
+    { name:'Metal Roofing (steel/aluminum)', saving:'−53%', why:'Steel standing-seam roofing lasts 40–70 years vs 20–25 for asphalt. Contains 25–95% recycled content. Fully recyclable at end of life. Widely available and familiar to US roofers.', region:'National · US', dot:'#444441', reuse:80, recycle:95, recover:20 },
+    { name:'Cool Roof (reflective coating)', saving:'−30%', why:'White or light-colored reflective roof coatings can cut cooling loads by 10–15% in Sun Belt climates. ENERGY STAR rated products available from Dow, Tremco, and GAF nationally.', region:'Sun Belt · Southeast US', dot:'#185FA5', reuse:10, recycle:20, recover:30 },
+    { name:'Reclaimed Slate or Clay Tile', saving:'−78%', why:'Salvaged slate lasts 150+ years with near-zero new carbon. Strong supply of reclaimed material in the Northeast and Mid-Atlantic where slate was widely used historically.', region:'Northeast · Mid-Atlantic US', dot:'#534AB7', reuse:95, recycle:85, recover:80 },
+  ],
+  'TPO Membrane': [
+    { name:'Green / Living Roof Assembly', saving:'−45%', why:'Extensive green roofs reduce stormwater runoff, extend membrane life 2–3x, and reduce urban heat island effect. Strong incentive programs in Chicago, NYC, Portland, and Philadelphia.', region:'Urban US · Northeast · Midwest', dot:'#1D9E75', reuse:40, recycle:50, recover:80 },
+    { name:'EPDM Membrane (recycled content)', saving:'−25%', why:'EPDM rubber membranes with high recycled content are durable, UV-stable, and widely available. Firestone and Carlisle supply recycled-content EPDM nationally. 40+ year lifespan.', region:'National · US', dot:'#639922', reuse:20, recycle:60, recover:40 },
+  ],
+  'Metal Roofing': [
+    { name:'Recycled-Content Metal Roofing', saving:'−40%', why:'Specify minimum 75% recycled steel or aluminum content — available from most major US suppliers including AEP Span and Metal Sales. Reduces upstream extraction carbon significantly.', region:'National · US', dot:'#444441', reuse:80, recycle:95, recover:20 },
+  ],
+  'Fiberglass Insulation': [
+    { name:'Mineral Wool Insulation', saving:'−30%', why:'Roxul / Rockwool mineral wool uses ~70% recycled content, is fire-resistant to 2000°F, and has better acoustic performance. Code-compliant and widely stocked at US suppliers.', region:'National · US', dot:'#EF9F27', reuse:20, recycle:60, recover:50 },
+    { name:'Recycled Cellulose Insulation', saving:'−55%', why:'Blown cellulose uses 85% recycled newsprint and has the lowest embodied carbon of any common US insulation. Produced nationally by Nu-Wool, GreenFiber, and others. Code-approved.', region:'National · US', dot:'#639922', reuse:10, recycle:80, recover:90 },
+    { name:'Spray Foam (bio-based)', saving:'−35%', why:'Bio-based open-cell spray foams using soy or castor oil replace petrochemical content. Demilec and Lapolla offer bio-based options with EPA Safer Choice certification.', region:'National · US', dot:'#1D9E75', reuse:5, recycle:15, recover:60 },
+  ],
+  // FLOOR alternatives
+  'Concrete Slab': [
+    { name:'Concrete with SCM (fly ash / slag)', saving:'−40%', why:'Replacing 40–50% of Portland cement with fly ash or ground granulated blast-furnace slag (GGBS) is standard practice across the US. Reduces carbon with no performance loss — required by many green building specs.', region:'National · US', dot:'#639922', reuse:20, recycle:50, recover:40 },
+    { name:'Mass Timber Floor (CLT / NLT)', saving:'−72%', why:'Cross-laminated or nail-laminated timber floors replace concrete slabs in wood-frame and hybrid structures. Sequesters carbon and reduces structural dead load. Available from US mills nationally.', region:'Pacific Northwest · Southeast US', dot:'#639922', reuse:70, recycle:75, recover:90 },
+    { name:'Recycled Aggregate Concrete', saving:'−20%', why:'Using recycled concrete aggregate (RCA) from demolished structures replaces virgin aggregate. Widely available in US urban markets. ASTM C33-compliant mixes are standard.', region:'National · Urban US', dot:'#9A9A96', reuse:20, recycle:70, recover:40 },
+  ],
+  'Engineered Wood': [
+    { name:'FSC-Certified Engineered Wood', saving:'−25%', why:'Specifying FSC-certified engineered wood flooring ensures responsible forest management. Columbia Forest Products, Anderson Tuftex, and others offer FSC product lines nationally.', region:'National · US', dot:'#639922', reuse:65, recycle:70, recover:90 },
+    { name:'Reclaimed Hardwood Flooring', saving:'−90%', why:'Salvaged oak, maple, and heart pine carry near-zero manufacturing carbon. Strong US market for reclaimed barn wood and factory flooring in the Midwest and South.', region:'Midwest · Southeast US', dot:'#BA7517', reuse:90, recycle:70, recover:80 },
+    { name:'Bamboo Flooring (domestic)', saving:'−40%', why:'Strand-woven bamboo is harder than red oak, rapidly renewable, and available from LEED-compliant suppliers. Cali Bamboo and Ambient source responsibly from certified plantations.', region:'National · US', dot:'#1D9E75', reuse:50, recycle:70, recover:85 },
+  ],
+  'Carpet': [
+    { name:'Recycled-Content Carpet Tile', saving:'−50%', why:'Interface and Shaw offer carpet tiles made with 50–100% recycled content and take-back programs (ReEntry, Cradle to Cradle). Replaces broadloom with a circular end-of-life model.', region:'National · US', dot:'#534AB7', reuse:30, recycle:80, recover:50 },
+    { name:'Reclaimed Hardwood Flooring', saving:'−82%', why:'Replacing carpet with reclaimed hardwood eliminates off-gassing VOCs and provides a near-zero-carbon finish floor. Strong US supply in most regions.', region:'National · US', dot:'#BA7517', reuse:90, recycle:70, recover:80 },
+  ],
+  // STRUCTURE alternatives
+  'Structural Steel': [
+    { name:'Recycled-Content Steel (EAF)', saving:'−72%', why:'Electric arc furnace (EAF) steel using scrap has ~72% lower carbon than virgin blast furnace steel. Over 70% of US steel is already EAF-produced. Specify minimum 90% recycled content — available from Nucor, SDI, and CMC nationally.', region:'National · US', dot:'#444441', reuse:85, recycle:98, recover:20 },
+    { name:'Mass Timber (CLT / Glulam)', saving:'−80%', why:'CLT and glulam can replace steel in many low-to-mid-rise applications. Sequesters carbon for the building lifetime. IBC Chapter 23 (tall wood buildings) now allows mass timber to 18 stories in the US.', region:'Pacific Northwest · Southeast US', dot:'#639922', reuse:70, recycle:75, recover:90 },
+    { name:'Hybrid Timber-Steel Structure', saving:'−45%', why:'Combining mass timber floors/columns with minimal steel connections is common in US Passive House and green buildings. Reduces steel tonnage by 40–60% vs all-steel frame.', region:'National · US', dot:'#1D9E75', reuse:65, recycle:80, recover:85 },
+  ],
+  'Cast-in-Place Concrete': [
+    { name:'Low-Carbon Concrete (SCMs)', saving:'−42%', why:'Blended cements with 40–50% supplementary cementitious materials (fly ash, GGBS, silica fume) are standard in US green specs. ASTM C595 Type IL Portland-Limestone Cement is now widely available.', region:'National · US', dot:'#639922', reuse:20, recycle:55, recover:40 },
+    { name:'Precast Concrete', saving:'−20%', why:'Factory-produced precast has tighter quality control, less waste, and lower water-cement ratios than site-cast — improving strength and reducing cement content. Available from Oldcastle and regional precasters nationally.', region:'National · US', dot:'#185FA5', reuse:30, recycle:60, recover:40 },
+    { name:'Mass Timber (CLT)', saving:'−78%', why:'CLT can directly replace cast-in-place concrete slabs and walls. Now code-compliant in all 50 states under IBC 2021 for buildings up to 18 stories.', region:'National · US', dot:'#639922', reuse:70, recycle:75, recover:90 },
+  ],
+  'Glulam Timber': [
+    { name:'FSC-Certified Glulam', saving:'−30%', why:'Specifying FSC-certified glulam ensures responsible sourcing. Western Arch, DR Johnson, and Calvert specify certified timber. Available in Douglas fir, Southern yellow pine, and Alaska yellow cedar.', region:'Pacific Northwest · Southeast US', dot:'#639922', reuse:75, recycle:75, recover:90 },
+  ],
+  'Cold-Formed Steel': [
+    { name:'Recycled-Content CFS', saving:'−35%', why:'Cold-formed steel framing uses 25–65% recycled content depending on the supplier. Specify high recycled-content from ClarkDietrich or Telling Industries to reduce upstream carbon.', region:'National · US', dot:'#444441', reuse:70, recycle:90, recover:20 },
+    { name:'Cross-Laminated Timber (CLT)', saving:'−65%', why:'CLT panels replace CFS in platform-frame construction. Faster installation, better acoustic performance, and carbon storage. Strong US code path via IBC Chapter 23.', region:'Pacific Northwest · Southeast US', dot:'#639922', reuse:70, recycle:75, recover:90 },
+  ],
+  // FACADE alternatives
+  'Fiber Cement Siding': [
+    { name:'Reclaimed Wood Siding', saving:'−88%', why:'Salvaged barn wood or factory siding carries near-zero manufacturing carbon. Distinctive character, widely available in rural US regions. Cedar and redwood reclaimed siding is particularly prized.', region:'Northwest · Midwest US', dot:'#BA7517', reuse:95, recycle:70, recover:80 },
+    { name:'FSC-Certified Cedar Siding', saving:'−45%', why:'Western red cedar is naturally durable (50+ yr lifespan unfinished), carbon-sequestering, and widely available from PNW mills. Real Cedar Association provides certification guidance.', region:'Pacific Northwest · US', dot:'#639922', reuse:60, recycle:70, recover:90 },
+  ],
+  'Aluminum Curtain Wall': [
+    { name:'High Recycled-Content Aluminum', saving:'−75%', why:'Recycled aluminum uses 95% less energy than primary aluminum. Specify minimum 75% post-consumer recycled content — available from Kawneer, Arcadia, and YKK AP for curtain wall systems.', region:'National · US', dot:'#185FA5', reuse:85, recycle:95, recover:20 },
+    { name:'Timber Curtain Wall / Storefront', saving:'−80%', why:'Timber-framed curtain wall systems (Zola, Loewen) provide high performance glazing with wood structural members. Carbon-sequestering, high-R-value, and architecturally distinctive.', region:'National · US', dot:'#639922', reuse:65, recycle:60, recover:85 },
+  ],
+  'Vinyl Siding': [
+    { name:'Fiber Cement Siding', saving:'−24%', why:'Fiber cement is more durable (50+ yr), fire-resistant, and has lower lifecycle carbon than vinyl. James Hardie products are available at every US lumber yard and home improvement store.', region:'National · US', dot:'#9A9A96', reuse:20, recycle:30, recover:25 },
+    { name:'Reclaimed Wood Siding', saving:'−90%', why:'Reclaimed wood eliminates new manufacturing carbon entirely. Barn siding, shiplap, and channel rustic are widely available across the US for a fraction of the cost of new materials.', region:'National · US', dot:'#BA7517', reuse:95, recycle:70, recover:80 },
+    { name:'FSC-Certified Cedar Siding', saving:'−48%', why:'Real cedar outperforms vinyl in longevity, can be refinished, and sequesters carbon for its lifetime. PNW mills supply cedar siding nationally through building material distributors.', region:'Pacific Northwest · US', dot:'#639922', reuse:60, recycle:70, recover:90 },
+  ],
+  'EIFS / Stucco': [
+    { name:'Lime Render / Plaster', saving:'−38%', why:'Hydraulic lime plasters are breathable, repairable, and use significantly less energy to produce than Portland cement stucco. Lime Depot and St. Astier supply nationally; US interest growing with Passive House.', region:'National · US', dot:'#1D9E75', reuse:80, recycle:85, recover:90 },
+    { name:'Fiber Cement Panel Cladding', saving:'−22%', why:'Prefabricated fiber cement rainscreen panels (Nichiha, Equitone) are durable, low-maintenance, and have lower lifecycle carbon than EIFS. Code-compliant and available nationally.', region:'National · US', dot:'#9A9A96', reuse:20, recycle:35, recover:25 },
+  ],
+  'default': [
+    { name:'Recycled-Content Steel (EAF)', saving:'−72%', why:'Over 70% of US steel is already produced in electric arc furnaces using scrap. Specify 90%+ recycled content — available nationally from Nucor, SDI, and CMC. The single biggest structural carbon lever in US construction.', region:'National · US', dot:'#444441', reuse:85, recycle:98, recover:20 },
+    { name:'Mass Timber (CLT / Glulam)', saving:'−78%', why:'Cross-laminated and glulam timber systems store carbon for the building\'s lifetime. Now code-approved to 18 stories in the US. PNW and Southeast mills supply the entire country.', region:'Pacific Northwest · Southeast US', dot:'#639922', reuse:70, recycle:75, recover:90 },
+    { name:'Low-Carbon Concrete (SCMs)', saving:'−42%', why:'Blended cements with fly ash or GGBS reduce Portland cement — and carbon — by 40–50%. Available nationwide; now specified as standard in many US state DOT and institutional projects.', region:'National · US', dot:'#1D9E75', reuse:20, recycle:55, recover:40 },
+  ]
+};
+
+const PREC_DATA = {
+  wall: [
+    { name:'Bullitt Center', loc:'Seattle, WA · Miller Hull Partnership · 2013', bg:'#EAF3DE', icon:'ti-building', tags:['FSC Timber','Living Building','Zero carbon'], stat:'First Living Building Challenge certified office', deva:'' },
+    { name:'Oregon Sustainability Center', loc:'Portland, OR · 2014', bg:'#FAEEDA', icon:'ti-home', tags:['Mass timber','Rammed earth','Passive systems'], stat:'−68% embodied carbon vs code baseline', deva:'' },
+    { name:'Brock Environmental Center', loc:'Virginia Beach, VA · SmithGroup · 2016', bg:'#E6F1FB', icon:'ti-building-arch', tags:['Reclaimed materials','Net zero','Coastal resilience'], stat:'Living Building Certified · net positive energy', deva:'' },
+  ],
+  roof: [
+    { name:'Chicago City Hall Green Roof', loc:'Chicago, IL · City of Chicago · 2001', bg:'#EAF3DE', icon:'ti-home', tags:['Living roof','Urban heat island','Stormwater'], stat:'Reduced cooling load by 30% on roof level', deva:'' },
+    { name:'Pixel Building', loc:'Melbourne / US Tour · 2010', bg:'#FAEEDA', icon:'ti-building', tags:['Cool roof','Solar integrated','Rainwater harvest'], stat:'World\'s first carbon-neutral office building', deva:'' },
+    { name:'NREL Research Support Facility', loc:'Golden, CO · RNL Design · 2010', bg:'#E6F1FB', icon:'ti-building', tags:['Metal roofing','PV integrated','Net zero energy'], stat:'Net zero energy · 50% below ASHRAE baseline', deva:'' },
+  ],
+  floor: [
+    { name:'T3 Minneapolis', loc:'Minneapolis, MN · Michael Green Architecture · 2016', bg:'#EAF3DE', icon:'ti-building', tags:['Mass timber floor','NLT panels','Low carbon'], stat:'First modern mass timber office in US', deva:'' },
+    { name:'Carbon12', loc:'Portland, OR · PATH Architecture · 2018', bg:'#FAEEDA', icon:'ti-home', tags:['CLT floors','Hybrid timber-steel','8 stories'], stat:'Tallest CLT building in US at completion', deva:'' },
+    { name:'Catalyst Building', loc:'Spokane, WA · ALSC Architects · 2020', bg:'#E6F1FB', icon:'ti-building-arch', tags:['Mass timber','Concrete topping','Carbon stored'], stat:'Stores 2,400 metric tons CO₂ in structure', deva:'' },
+  ],
+  structure: [
+    { name:'Ascent Tower', loc:'Milwaukee, WI · Thornton Tomasetti · 2022', bg:'#EAF3DE', icon:'ti-building', tags:['Hybrid CLT','Mass timber','25 stories'], stat:'Tallest mass timber building in the world (2022)', deva:'' },
+    { name:'Framework Building', loc:'Portland, OR · LEVER Architecture · 2022', bg:'#FAEEDA', icon:'ti-building', tags:['CLT structure','Recycled steel','Carbon sequester'], stat:'−60% structural carbon vs concrete baseline', deva:'' },
+    { name:'Penn State Forest Operations Building', loc:'Pennsylvania · 2010', bg:'#E6F1FB', icon:'ti-home', tags:['Glulam frame','FSC timber','Low embodied C'], stat:'−78% vs steel equivalent structure', deva:'' },
+  ],
+  facade: [
+    { name:'150 North Riverside', loc:'Chicago, IL · Goettsch Partners · 2017', bg:'#EAF3DE', icon:'ti-building', tags:['High-recycle aluminum','Curtain wall','LEED Gold'], stat:'High-recycled content curtain wall system', deva:'' },
+    { name:'Kendeda Building', loc:'Atlanta, GA · Lord Aeck Sargent · 2019', bg:'#FAEEDA', icon:'ti-building-arch', tags:['Reclaimed materials','Living Building','Fiber cement'], stat:'Living Building Challenge Certified', deva:'' },
+    { name:'Seattle Passive House', loc:'Seattle, WA · NK Architects · 2014', bg:'#E6F1FB', icon:'ti-home', tags:['Cedar siding','Rainscreen','Passive House'], stat:'First certified Passive House multifamily in WA', deva:'' },
+  ],
+  default: [
+    { name:'Bullitt Center', loc:'Seattle, WA · Miller Hull · 2013', bg:'#EAF3DE', icon:'ti-building-arch', tags:['Living Building','Mass timber','Net positive'], stat:'Global benchmark for sustainable construction', deva:'' },
+    { name:'Brock Environmental Center', loc:'Virginia Beach, VA · 2016', bg:'#FAEEDA', icon:'ti-building-arch', tags:['Reclaimed materials','Net zero water','Coastal'], stat:'Living Building Certified · 100% reclaimed water', deva:'' },
+    { name:'Kendeda Building', loc:'Atlanta, GA · 2019', bg:'#E6F1FB', icon:'ti-building', tags:['Reclaimed wood','Local materials','Net positive'], stat:'Net positive energy + water · LBC Certified', deva:'' },
+  ]
+};
+
+// ─── UPLOAD SIMULATION ───
+function simulateUpload() {
+  if (uploadDone) return;
+  const zone = document.getElementById('upload-zone');
+  const icon = document.getElementById('upload-icon');
+  const title = document.getElementById('upload-title');
+  const sub = document.getElementById('upload-sub');
+  zone.style.pointerEvents = 'none';
+  icon.className = 'ti ti-loader upload-icon';
+  title.textContent = 'Parsing model…';
+  sub.textContent = 'Reading geometry, component layers, and material zones from your file.';
+  setTimeout(() => {
+    zone.classList.add('uploaded');
+    icon.className = 'ti ti-circle-check upload-icon';
+    title.textContent = 'Model uploaded successfully';
+    sub.textContent = 'File parsed · 847 components detected across 12 zones';
+    document.getElementById('upload-success').style.display = 'flex';
+    uploadDone = true;
+  }, 1400);
+}
+
+// ─── COMPONENT SELECTION ───
+function selectComp(comp) {
+  activeComp = comp;
+  document.querySelectorAll('.comp-card').forEach(c => c.classList.remove('on'));
+  document.getElementById('comp-' + comp).classList.add('on');
+  // Filter chips to show only materials for this component
+  document.querySelectorAll('.mat-chip-btn').forEach(btn => {
+    const btnComp = btn.getAttribute('data-comp');
+    btn.style.display = (!btnComp || btnComp === comp) ? '' : 'none';
+  });
+}
+
+// ─── MATERIAL CHIPS ───
+function toggleChip(btn, mat) {
+  if (btn.classList.contains('selected')) {
+    btn.classList.remove('selected');
+    removeMaterial(mat);
+  } else {
+    btn.classList.add('selected');
+    addMaterialName(mat);
+  }
+}
+
+function addMaterial() {
+  const inp = document.getElementById('mat-input');
+  const val = inp.value.trim();
+  if (!val) return;
+  addMaterialName(val);
+  inp.value = '';
+}
+
+function addMaterialName(name) {
+  if (userMaterials.includes(name)) return;
+  userMaterials.push(name);
+  renderAddedMats();
+  // live update analysis if already showing
+  if (document.getElementById('screen-analysis').style.display !== 'none') {
+    renderUserMaterials();
+    renderAlternatives();
+    renderCarbonBars();
+    renderInsights();
+    renderPrecedents();
+  }
+}
+
+function removeMaterial(name) {
+  userMaterials = userMaterials.filter(m => m !== name);
+  document.querySelectorAll('.mat-chip-btn').forEach(btn => {
+    if (btn.textContent === name) btn.classList.remove('selected');
+  });
+  renderAddedMats();
+  if (document.getElementById('screen-analysis').style.display !== 'none') {
+    if (userMaterials.length === 0) {
+      document.getElementById('screen-analysis').style.display = 'none';
+      document.getElementById('screen-insights').style.display = 'none';
+      document.getElementById('empty-state').style.display = 'flex';
+      document.getElementById('active-bar').classList.remove('show');
+      document.getElementById('export-btn').style.display = 'none';
+    } else {
+      renderUserMaterials();
+      renderAlternatives();
+      renderCarbonBars();
+      renderInsights();
+      renderPrecedents();
+    }
+  }
+}
+
+function renderAddedMats() {
+  const container = document.getElementById('added-mats');
+  const btn = document.getElementById('analyse-btn');
+  if (userMaterials.length === 0) {
+    container.innerHTML = '<span style="font-size:11px;color:var(--text-tertiary);padding:3px 0" id="mats-placeholder">No materials added yet</span>';
+    btn.disabled = true;
+    return;
+  }
+  btn.disabled = false;
+  container.innerHTML = userMaterials.map(m =>
+    `<div class="added-mat">
+      <span>${m}</span>
+      <button onclick="removeMaterial('${m}')" title="Remove"><i class="ti ti-x" style="font-size:10px"></i></button>
+    </div>`
+  ).join('');
+}
+
+// ─── RUN ANALYSIS ───
+function runAnalysis() {
+  if (userMaterials.length === 0) return;
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('screen-analysis').style.display = 'block';
+  document.getElementById('screen-insights').style.display = 'block';
+  document.getElementById('export-btn').style.display = '';
+  document.getElementById('active-bar').classList.add('show');
+  document.getElementById('active-bar-text').textContent =
+    'Analysing: ' + activeComp.charAt(0).toUpperCase() + activeComp.slice(1) + ' · ' + userMaterials.join(', ') + ' — tap an alternative to explore circularity';
+  renderUserMaterials();
+  renderAlternatives();
+  renderCarbonBars();
+  renderInsights();
+  renderPrecedents();
+}
+
+// ─── RENDER USER MATERIALS ───
+function renderUserMaterials() {
+  const list = document.getElementById('user-mat-list');
+  const colors = ['#1D9E75','#EF9F27','#185FA5','#534AB7','#D85A30','#639922','#BA7517','#9A9A96'];
+  list.innerHTML = userMaterials.map((m, i) => {
+    const d = MATERIAL_DATA[m] || { carbon:120, durability:75, local:60, reuse:50, lifecycle:'med', color:'#9A9A96' };
+    const lcClass = d.lifecycle === 'high' ? 'lc-good' : d.lifecycle === 'med' ? 'lc-med' : 'lc-low';
+    const lcText = d.lifecycle === 'high' ? 'Good lifecycle' : d.lifecycle === 'med' ? 'Moderate' : 'Limited';
+    const carbonPct = Math.min(100, Math.round(d.carbon / 3));
+    return `<div class="user-mat-item">
+      <div class="user-mat-name"><div class="mat-dot" style="background:${colors[i%colors.length]}"></div>${m}</div>
+      <div class="mat-metrics">
+        <div class="mat-metric"><span class="mat-metric-label">Embodied carbon</span><span class="mat-metric-val" style="color:${d.color}">${d.carbon} kgCO₂e/m²</span></div>
+        <div class="metric-bar"><div class="metric-bar-fill" style="width:${carbonPct}%;background:${d.color}"></div></div>
+        <div class="mat-metric" style="margin-top:5px"><span class="mat-metric-label">Durability</span><span class="mat-metric-val">${d.durability}/100</span></div>
+        <div class="metric-bar"><div class="metric-bar-fill mf-blue" style="width:${d.durability}%"></div></div>
+        <div class="mat-metric" style="margin-top:5px"><span class="mat-metric-label">Local availability</span><span class="mat-metric-val">${d.local}%</span></div>
+        <div class="metric-bar"><div class="metric-bar-fill mf-teal" style="width:${d.local}%"></div></div>
+        <div class="mat-metric" style="margin-top:5px"><span class="mat-metric-label">Reuse potential</span><span class="mat-metric-val">${d.reuse}%</span></div>
+        <div class="metric-bar"><div class="metric-bar-fill mf-green" style="width:${d.reuse}%"></div></div>
+        <div style="margin-top:6px"><span class="lifecycle-chip ${lcClass}">${lcText}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── RENDER ALTERNATIVES ───
+function renderAlternatives() {
+  const list = document.getElementById('alt-list2');
+  let alts = [];
+  userMaterials.forEach(m => {
+    const a = ALT_DATA[m] || ALT_DATA['default'];
+    a.forEach(alt => { if (!alts.find(x => x.name === alt.name)) alts.push(alt); });
+  });
+  if (alts.length === 0) alts = ALT_DATA['default'];
+  alts = alts.slice(0, 5);
+  list.innerHTML = alts.map((a, i) =>
+    `<div class="alt-card2" id="alt2-${i}" onclick="selectAlt2(${i})">
+      <div class="alt-top">
+        <div class="alt-dot2" style="background:${a.dot}"></div>
+        <div class="alt-name2">${a.name}</div>
+        <div class="alt-saving">${a.saving}</div>
+      </div>
+      <div class="alt-why">${a.why}</div>
+      <span class="alt-region-tag"><i class="ti ti-map-pin" style="font-size:9px"></i> ${a.region}</span>
+    </div>`
+  ).join('');
+  window._currentAlts = alts;
+}
+
+// ─── SELECT ALTERNATIVE ───
+function selectAlt2(i) {
+  document.querySelectorAll('.alt-card2').forEach(c => c.classList.remove('on'));
+  document.getElementById('alt2-' + i).classList.add('on');
+  const a = window._currentAlts[i];
+  activeAlt = a;
+  renderCarbonBars(a.name);
+  const savedPct = a.saving;
+  document.getElementById('saving-num2').textContent = savedPct;
+  document.getElementById('saving-desc2').innerHTML = `carbon saving with <strong>${a.name}</strong><br><span style="font-size:9px;color:var(--text-tertiary)">Region: ${a.region}</span>`;
+  document.getElementById('circ-mini').style.display = 'block';
+  document.getElementById('circ-mini-grid').innerHTML = `
+    <div class="circ-mini-row">
+      <div class="circ-mini-label"><span>Reuse potential</span><span style="font-weight:500;color:var(--green-deep)">${a.reuse}%</span></div>
+      <div class="bar-track"><div class="bar-fill bf-green" style="width:0%" id="cm-reuse"></div></div>
+    </div>
+    <div class="circ-mini-row">
+      <div class="circ-mini-label"><span>Recycle rate</span><span style="font-weight:500;color:#185FA5">${a.recycle}%</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:0%;background:#378ADD" id="cm-recycle"></div></div>
+    </div>
+    <div class="circ-mini-row">
+      <div class="circ-mini-label"><span>Recovery / biodegradability</span><span style="font-weight:500;color:var(--green-mid)">${a.recover}%</span></div>
+      <div class="bar-track"><div class="bar-fill bf-teal" style="width:0%" id="cm-recover"></div></div>
+    </div>`;
+  setTimeout(() => {
+    document.getElementById('cm-reuse').style.width = a.reuse + '%';
+    document.getElementById('cm-recycle').style.width = a.recycle + '%';
+    document.getElementById('cm-recover').style.width = a.recover + '%';
+  }, 60);
+}
+
+// ─── RENDER CARBON BARS ───
+function renderCarbonBars(highlighted) {
+  const maxC = Math.max(...userMaterials.map(m => (MATERIAL_DATA[m] || {carbon:200}).carbon), 250);
+  const bars = userMaterials.map(m => {
+    const d = MATERIAL_DATA[m] || { carbon: 150 };
+    const pct = Math.round((d.carbon / maxC) * 100);
+    const cls = d.carbon > 180 ? 'bf-red' : d.carbon > 80 ? 'bf-amber' : 'bf-green';
+    return { label: m, val: d.carbon + ' kgCO₂e/m²', pct, cls, col: d.color || '#9A9A96', isAlt: false };
+  });
+  if (highlighted && MATERIAL_DATA[highlighted]) {
+    const d = MATERIAL_DATA[highlighted];
+    const pct = Math.round((d.carbon / maxC) * 100);
+    bars.push({ label: highlighted + ' (alt)', val: d.carbon + ' kgCO₂e/m²', pct, cls: 'bf-teal', col: '#1D9E75', isAlt: true });
+  }
+  document.getElementById('carbon-bars2').innerHTML = bars.map(b =>
+    `<div class="carbon-row2">
+      <div class="carbon-meta2">
+        <span style="${b.isAlt ? 'color:var(--green-deep);font-weight:500' : ''}">${b.label}</span>
+        <span style="color:${b.col}">${b.val}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill ${b.cls}" style="width:${b.pct}%"></div></div>
+    </div>`
+  ).join('');
+}
+
+// ─── RENDER INSIGHTS TABLE ───
+function renderInsights() {
+  const tbody = document.getElementById('carbon-tbody');
+  const maxC = Math.max(...userMaterials.map(m => (MATERIAL_DATA[m]||{carbon:200}).carbon), 250);
+  tbody.innerHTML = userMaterials.map(m => {
+    const d = MATERIAL_DATA[m] || { carbon:120, lifecycle:'med', color:'#9A9A96' };
+    const pct = Math.round((d.carbon / maxC)*100);
+    const cls = d.carbon > 180 ? 'bf-red' : d.carbon > 80 ? 'bf-amber' : 'bf-teal';
+    const lcClass = d.lifecycle === 'high' ? 'lc-good' : d.lifecycle === 'med' ? 'lc-med' : 'lc-low';
+    const lcText = d.lifecycle === 'high' ? 'Good' : d.lifecycle === 'med' ? 'Moderate' : 'Limited';
+    const impact = d.carbon > 200 ? 'Very high' : d.carbon > 100 ? 'High' : d.carbon > 50 ? 'Moderate' : 'Low';
+    return `<tr>
+      <td class="ct-mat">${m}</td>
+      <td class="ct-val" style="color:${d.color};font-weight:500">${d.carbon} kgCO₂e/m²</td>
+      <td class="ct-val">${impact}</td>
+      <td class="ct-bar-wrap"><div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div></td>
+      <td><span class="lifecycle-chip ${lcClass}">${lcText}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── RENDER PRECEDENTS ───
+function renderPrecedents() {
+  const precs = PREC_DATA[activeComp] || PREC_DATA['default'];
+  document.getElementById('prec-grid').innerHTML = precs.map(p =>
+    `<div class="prec-card">
+      <div class="prec-img" style="background:${p.bg}"><i class="ti ${p.icon}" style="font-size:26px;color:#085041"></i></div>
+      <div class="prec-body">
+        <div class="prec-name">${p.name}</div>
+        <div class="prec-loc">${p.loc}</div>
+        ${p.deva ? `<div class="prec-deva">${p.deva}</div>` : ''}
+        <div class="prec-tags">${p.tags.map(t => `<span class="prec-tag">${t}</span>`).join('')}</div>
+        <div class="prec-stat">${p.stat}</div>
+      </div>
+    </div>`
+  ).join('');
+}
+
+// ─── RESET ───
+function resetAll() {
+  userMaterials = [];
+  activeAlt = null;
+  uploadDone = false;
+  activeComp = 'wall';
+  document.getElementById('screen-analysis').style.display = 'none';
+  document.getElementById('screen-insights').style.display = 'none';
+  document.getElementById('empty-state').style.display = 'flex';
+  document.getElementById('active-bar').classList.remove('show');
+  document.getElementById('export-btn').style.display = 'none';
+  document.getElementById('upload-zone').className = 'upload-zone';
+  document.getElementById('upload-zone').style.pointerEvents = '';
+  document.getElementById('upload-icon').className = 'ti ti-file-3d upload-icon';
+  document.getElementById('upload-title').textContent = 'Drop your building model here';
+  document.getElementById('upload-sub').textContent = 'Upload an IFC, Revit, or SketchUp file to begin material analysis. Your model stays private and is not stored.';
+  document.getElementById('upload-success').style.display = 'none';
+  document.getElementById('added-mats').innerHTML = '<span style="font-size:11px;color:var(--text-tertiary);padding:3px 0" id="mats-placeholder">No materials added yet</span>';
+  document.getElementById('analyse-btn').disabled = true;
+  document.querySelectorAll('.comp-card').forEach(c => c.classList.remove('on'));
+  document.getElementById('comp-wall').classList.add('on');
+  document.querySelectorAll('.mat-chip-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('saving-num2').textContent = '—';
+  document.getElementById('saving-desc2').textContent = 'Select an alternative to see potential carbon saving';
+  document.getElementById('circ-mini').style.display = 'none';
+  // Re-apply chip filter
+  selectComp('wall');
+}
+
+// Initialize chip filter on load
+selectComp('wall');
+
+// ─── NAV PILL ROUTING ───
+function navClick(pill, target) {
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('on'));
+  pill.classList.add('on');
+  closeAllOverlays();
+  if (target === 'materials-db') {
+    document.getElementById('panel-materials-db').classList.add('show');
+    loadMaterialsDB();
+  } else if (target === 'circular-economy') {
+    document.getElementById('panel-circular-economy').classList.add('show');
+    loadCircularEconomy();
+  }
+}
+
+function closeAllOverlays() {
+  document.querySelectorAll('.overlay-panel').forEach(p => p.classList.remove('show'));
+}
+
+function closeOverlay(id) {
+  document.getElementById(id).classList.remove('show');
+  document.querySelectorAll('.nav-pill').forEach((p, i) => { if (i === 0) p.classList.add('on'); else p.classList.remove('on'); });
+}
+
+// ─── MATERIALS DB — AI-POWERED ───
+let matDBLoaded = false;
+let matDBData = [];
+
+async function loadMaterialsDB(force = false) {
+  if (matDBLoaded && !force) return;
+  matDBLoaded = false;
+  const grid = document.getElementById('matdb-grid');
+  grid.innerHTML = `<div class="loading-state" style="grid-column:1/-1"><div class="loading-spinner"></div><span style="font-size:12px">Searching latest sustainable materials research…</span></div>`;
+
+  const prompt = `You are a sustainable materials database for architects. Return a JSON array of exactly 12 real sustainable building materials currently available in the market (mix of structural, envelope, finish, insulation categories). For each include:
+- name (string)
+- category (string: Structural | Envelope | Insulation | Finish | Roofing)
+- carbon_kgco2e_per_m2 (number, realistic embodied carbon)
+- carbon_label (string, e.g. "Very low" | "Low" | "Medium")
+- description (string, 2 sentences, mention real products/brands/projects)
+- tags (array of 3-4 short strings like ["Recycled content","Carbon sequestering","FSC certified"])
+- real_projects (string, 1-2 real building names that used it)
+- source_url (string, a real URL to a product page, EPD database, or supplier like www.rockwool.com, www.freresbros.com, etc)
+- reuse_pct (number 0-100)
+- recycle_pct (number 0-100)
+- carbon_color (string: "#1D9E75" for low, "#EF9F27" for medium, "#D85A30" for high carbon)
+
+Return ONLY valid JSON array, no markdown, no explanation.`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 4000,
+        tools: [{ type: "web_search_20250305", name: "web_search" }],
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+    const data = await res.json();
+    let text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    text = text.replace(/```json|```/g, '').trim();
+    const start = text.indexOf('[');
+    const end = text.lastIndexOf(']');
+    if (start !== -1 && end !== -1) {
+      matDBData = JSON.parse(text.slice(start, end + 1));
+    }
+    matDBLoaded = true;
+    renderMatDB(matDBData);
+  } catch(e) {
+    grid.innerHTML = `<div class="loading-state" style="grid-column:1/-1"><i class="ti ti-alert-circle"></i><span style="font-size:12px">Could not load live data. Showing curated database.</span></div>`;
+    matDBData = FALLBACK_MAT_DB;
+    matDBLoaded = true;
+    renderMatDB(matDBData);
+  }
+}
+
+function renderMatDB(data) {
+  const grid = document.getElementById('matdb-grid');
+  if (!data || data.length === 0) { grid.innerHTML = `<div class="loading-state" style="grid-column:1/-1">No materials found.</div>`; return; }
+  grid.innerHTML = data.map(m => `
+    <div class="mat-db-card">
+      <div class="mat-db-header">
+        <div>
+          <div class="mat-db-name">${m.name}</div>
+          <span class="mat-db-category">${m.category}</span>
+        </div>
+        <div style="text-align:right">
+          <div class="mat-db-carbon" style="color:${m.carbon_color || 'var(--green-deep)'}">${m.carbon_kgco2e_per_m2}</div>
+          <div class="mat-db-carbon-label">kgCO₂e/m²</div>
+        </div>
+      </div>
+      <div class="mat-db-desc">${m.description}</div>
+      <div class="mat-db-tags">${(m.tags||[]).map(t => `<span class="mat-db-tag">${t}</span>`).join('')}</div>
+      <div class="mat-db-projects"><i class="ti ti-building" style="font-size:10px"></i> ${m.real_projects || '—'}</div>
+      ${m.source_url ? `<a class="mat-db-link" href="${m.source_url}" target="_blank"><i class="ti ti-external-link" style="font-size:10px"></i> View source / EPD</a>` : ''}
+      <div style="margin-top:10px;display:flex;gap:16px">
+        <div style="flex:1">
+          <div style="font-size:9px;color:var(--text-tertiary);margin-bottom:2px">Reuse</div>
+          <div class="bar-track"><div class="bar-fill bf-teal" style="width:${m.reuse_pct||0}%"></div></div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:9px;color:var(--text-tertiary);margin-bottom:2px">Recycle</div>
+          <div class="bar-track"><div class="bar-fill bf-green" style="width:${m.recycle_pct||0}%"></div></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filterMatDB() {
+  const q = document.getElementById('matdb-search').value.toLowerCase();
+  if (!q) { renderMatDB(matDBData); return; }
+  renderMatDB(matDBData.filter(m =>
+    (m.name||'').toLowerCase().includes(q) ||
+    (m.category||'').toLowerCase().includes(q) ||
+    (m.description||'').toLowerCase().includes(q) ||
+    (m.tags||[]).some(t => t.toLowerCase().includes(q))
+  ));
+}
+
+// ─── CIRCULAR ECONOMY — AI-POWERED ───
+let circLoaded = false;
+
+async function loadCircularEconomy(force = false) {
+  if (circLoaded && !force) return;
+  circLoaded = false;
+  const grid = document.getElementById('circ-db-grid');
+  grid.innerHTML = `<div class="loading-state" style="grid-column:1/-1"><div class="loading-spinner"></div><span style="font-size:12px">Searching circularity data…</span></div>`;
+
+  const prompt = `You are a circular economy expert for the construction industry. Return a JSON array of exactly 10 real building materials with high circular economy potential. For each include:
+- name (string)
+- subtitle (string, e.g. "Structural timber system" )
+- icon_class (string, a tabler icon class like "ti-trees" or "ti-recycle" or "ti-building")
+- icon_bg (string, CSS color like "#EAF3DE")
+- icon_color (string, CSS color like "#3B6D11")
+- reuse_score (number 0-100)
+- recycle_score (number 0-100)
+- recover_score (number 0-100)
+- description (string, 2-3 sentences describing why this material is circular, mention real brands, programs, or standards like Cradle to Cradle, EPEA, Interface ReEntry, etc.)
+- strategies (array of 4-5 short strings like ["Design for disassembly","Manufacturer take-back","Reuse at end of life","Biodegradable"])
+- real_example (string, 1 real building or project using this material circularly)
+
+Focus on materials like: mass timber with FSC certification, structural steel with recycled content and take-back programs, reclaimed brick, recycled carpet tiles with take-back, mycelium composites, hempcrete, reclaimed hardwood, precast concrete panels designed for disassembly, aluminium with high recycled content, and bamboo.
+
+Return ONLY valid JSON array, no markdown, no explanation.`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 4000,
+        tools: [{ type: "web_search_20250305", name: "web_search" }],
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+    const data = await res.json();
+    let text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    text = text.replace(/```json|```/g, '').trim();
+    const start = text.indexOf('[');
+    const end = text.lastIndexOf(']');
+    let circData = [];
+    if (start !== -1 && end !== -1) {
+      circData = JSON.parse(text.slice(start, end + 1));
+    }
+    circLoaded = true;
+    renderCircDB(circData);
+  } catch(e) {
+    circLoaded = true;
+    renderCircDB(FALLBACK_CIRC_DB);
+  }
+}
+
+function renderCircDB(data) {
+  const grid = document.getElementById('circ-db-grid');
+  if (!data || data.length === 0) { grid.innerHTML = `<div class="loading-state" style="grid-column:1/-1">No data found.</div>`; return; }
+  grid.innerHTML = data.map(m => `
+    <div class="circ-card">
+      <div class="circ-card-header">
+        <div class="circ-ico" style="background:${m.icon_bg||'var(--green-pale)'};color:${m.icon_color||'var(--green-deep)'}">
+          <i class="ti ${m.icon_class||'ti-recycle'}"></i>
+        </div>
+        <div>
+          <div class="circ-card-title">${m.name}</div>
+          <div class="circ-card-sub">${m.subtitle||''}</div>
+        </div>
+      </div>
+      <div class="circ-score-row">
+        <div class="circ-score-item">
+          <div class="circ-score-label">Reuse</div>
+          <div class="circ-score-val" style="color:var(--green-deep)">${m.reuse_score}%</div>
+          <div class="circ-score-bar"><div class="circ-score-fill" style="width:${m.reuse_score}%;background:var(--green-deep)"></div></div>
+        </div>
+        <div class="circ-score-item">
+          <div class="circ-score-label">Recycle</div>
+          <div class="circ-score-val" style="color:#185FA5">${m.recycle_score}%</div>
+          <div class="circ-score-bar"><div class="circ-score-fill" style="width:${m.recycle_score}%;background:#185FA5"></div></div>
+        </div>
+        <div class="circ-score-item">
+          <div class="circ-score-label">Recover</div>
+          <div class="circ-score-val" style="color:var(--green-mid)">${m.recover_score}%</div>
+          <div class="circ-score-bar"><div class="circ-score-fill" style="width:${m.recover_score}%;background:var(--green-mid)"></div></div>
+        </div>
+      </div>
+      <div class="circ-desc">${m.description}</div>
+      ${m.real_example ? `<div style="font-size:10px;color:var(--text-tertiary);margin-bottom:8px;display:flex;align-items:center;gap:4px"><i class="ti ti-building" style="font-size:10px"></i> ${m.real_example}</div>` : ''}
+      <div class="circ-strategies">${(m.strategies||[]).map(s => `<span class="circ-strategy">${s}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+// ─── FALLBACK DATA ───
+const FALLBACK_MAT_DB = [
+  { name:"Cross-Laminated Timber (CLT)", category:"Structural", carbon_kgco2e_per_m2: -30, carbon_label:"Carbon storing", description:"CLT panels store atmospheric carbon for the building lifetime. Freres Bros and SmartLam supply nationally in the US, and the Bullitt Center in Seattle used CLT throughout.", tags:["Carbon sequestering","FSC certified","IBC 2021 compliant"], real_projects:"Bullitt Center, Seattle · Ascent Tower, Milwaukee", source_url:"https://www.freresbros.com", reuse_pct:70, recycle_pct:75, carbon_color:"#1D9E75" },
+  { name:"Recycled-Content EAF Steel", category:"Structural", carbon_kgco2e_per_m2: 80, carbon_label:"Low", description:"Electric arc furnace steel from Nucor or SDI uses 90%+ scrap, cutting carbon by ~72% vs virgin steel. Framework Building in Portland specified high-recycled structural steel.", tags:["90%+ recycled","Infinite recyclability","Low-carbon"], real_projects:"Framework Building, Portland · Kendeda Building, Atlanta", source_url:"https://www.nucor.com/sustainability", reuse_pct:85, recycle_pct:98, carbon_color:"#1D9E75" },
+  { name:"Mineral Wool Insulation", category:"Insulation", carbon_kgco2e_per_m2: 8, carbon_label:"Very low", description:"Rockwool and Knauf Insulation produce mineral wool with up to 70% recycled content. Fire-resistant to 2000°F and widely available across the US.", tags:["70% recycled","Fire resistant","Acoustic performance"], real_projects:"NREL Research Facility, Golden CO · Many Passive House projects", source_url:"https://www.rockwool.com", reuse_pct:20, recycle_pct:60, carbon_color:"#1D9E75" },
+  { name:"Reclaimed Brick", category:"Envelope", carbon_kgco2e_per_m2: 5, carbon_label:"Near zero", description:"Salvaged Chicago common brick or Philadelphia brick carries near-zero manufacturing carbon. Specialist suppliers like Blackacre and ReSource operate in most US metro areas.", tags:["Near-zero carbon","Local sourcing","Historic character"], real_projects:"Various adaptive reuse projects nationally", source_url:"https://www.salvagedmaterials.com", reuse_pct:95, recycle_pct:80, carbon_color:"#1D9E75" },
+  { name:"Hempcrete", category:"Envelope", carbon_kgco2e_per_m2: -35, carbon_label:"Carbon negative", description:"Hemp hurd and lime binder make a carbon-negative wall system. American Lime Technology and Hemp Block USA supply nationally. The Flat Iron Building in Asheville NC used hempcrete.", tags:["Carbon negative","Breathable","Bio-based"], real_projects:"Various residential US projects · Flat Iron Building, Asheville NC", source_url:"https://www.americanlimetechnology.com", reuse_pct:80, recycle_pct:85, carbon_color:"#1D9E75" },
+  { name:"Recycled Cellulose Insulation", category:"Insulation", carbon_kgco2e_per_m2: 3, carbon_label:"Ultra low", description:"Blown cellulose uses 85% recycled newsprint — the lowest embodied carbon of any common US insulation. GreenFiber and Nu-Wool produce it nationally.", tags:["85% recycled","Lowest carbon insulation","Code approved"], real_projects:"Thousands of US residential and commercial projects", source_url:"https://www.greenfiber.com", reuse_pct:10, recycle_pct:80, carbon_color:"#1D9E75" },
+];
+
+const FALLBACK_CIRC_DB = [
+  { name:"Mass Timber (CLT/Glulam)", subtitle:"Structural timber system", icon_class:"ti-trees", icon_bg:"#EAF3DE", icon_color:"#3B6D11", reuse_score:75, recycle_score:75, recover_score:90, description:"CLT panels can be fully disassembled and reused at end of life. FSC certification ensures responsible forest stewardship. Freres Bros and SmartLam offer take-back programs.", strategies:["Design for disassembly","FSC certification","Carbon sequestration","Biomass recovery"], real_example:"Bullitt Center, Seattle — designed for 250-year lifespan" },
+  { name:"Recycled-Content Structural Steel", subtitle:"EAF electric arc furnace steel", icon_class:"ti-box", icon_bg:"#E6F1FB", icon_color:"#0C447C", reuse_score:85, recycle_score:98, recover_score:20, description:"Steel is infinitely recyclable. Over 70% of US steel is already EAF-produced. Nucor operates a steel take-back and recycling network nationally.", strategies:["Infinite recyclability","Take-back program","Structural reuse","Closed-loop supply"], real_example:"Framework Building, Portland — specified high-recycle structural steel" },
+  { name:"Reclaimed Brick", subtitle:"Salvaged masonry", icon_class:"ti-wall", icon_bg:"#FAEEDA", icon_color:"#854F0B", reuse_score:95, recycle_score:80, recover_score:70, description:"Reclaimed brick from demolition projects carries near-zero manufacturing carbon. Specialist salvage operations in every major US city provide certified reclaimed masonry.", strategies:["Direct reuse","Historic character","Near-zero carbon","Local sourcing"], real_example:"Kendeda Building, Atlanta — used reclaimed wood and masonry" },
+  { name:"Recycled Carpet Tile (Interface)", subtitle:"Modular carpet with take-back", icon_class:"ti-layout-grid", icon_bg:"#EEEDFE", icon_color:"#3C3489", reuse_score:30, recycle_score:80, recover_score:50, description:"Interface ReEntry and Shaw Cradle-to-Cradle programs collect used carpet tiles nationally for recycling into new product. Tiles can be individually replaced without full floor replacement.", strategies:["Manufacturer take-back","Cradle to Cradle","Individual replacement","Recycled into new product"], real_example:"Multiple corporate campuses and educational buildings nationally" },
+];
+
+</script>
+</body>
+</html>
