@@ -1,0 +1,149 @@
+{
+  "_notice": "SAMPLE DATA. Risk levels below are illustrative judgments for demonstrating the SROT Site Intelligence Module. They were not pulled from NOAA, FEMA, USGBC or any live service. A 'refs' entry is listed only where the explanation restates something from that document. Do not use for design or insurance decisions.",
+  "sites": [
+    {
+      "id": "boston-wit",
+      "label": "550 Huntington Ave, Boston, MA",
+      "region": "Mission Hill / Fenway · Boston, Massachusetts",
+      "match": ["550 huntington", "huntington ave", "wentworth", "wit boston", "mission hill", "fenway"],
+      "hazards": {
+        "heat": {
+          "present": {
+            "risk": "moderate",
+            "text": "Dense pavement and rooftops around this campus absorb and hold heat, so it runs warmer than greener parts of the city.",
+            "refs": [{ "name": "EPA · Reduce Heat Islands", "url": "https://www.epa.gov/green-infrastructure/reduce-heat-islands" }]
+          },
+          "future": {
+            "risk": "high",
+            "text": "Climate Ready Boston projects many more very hot days by mid-century, which would intensify heat in paved areas like this one.",
+            "refs": [{ "name": "Climate Ready Boston (2016) · BRAG projections report", "url": "https://www.boston.gov/sites/default/files/document-file-12-2016/brag_report_-_final.pdf" }]
+          }
+        },
+        "flood": {
+          "present": {
+            "risk": "moderate",
+            "text": "Intense rain can overwhelm local drainage in low spots. Check the parcel's official flood zone on FEMA's flood map before design.",
+            "refs": [{ "name": "FEMA Flood Map Service Center", "url": "https://msc.fema.gov/portal/home" }]
+          },
+          "future": {
+            "risk": "moderate",
+            "text": "Climate Ready Boston expects heavier rainstorms, which raises the chance of stormwater flooding even away from the coast.",
+            "refs": [{ "name": "Climate Ready Boston (2016) · BRAG projections report", "url": "https://www.boston.gov/sites/default/files/document-file-12-2016/brag_report_-_final.pdf" }]
+          }
+        },
+        "coastal": {
+          "present": {
+            "risk": "low",
+            "text": "The site is inland from Boston Harbor, so direct storm surge exposure today is limited.",
+            "refs": []
+          },
+          "future": {
+            "risk": "low",
+            "text": "Climate Ready Boston plans for about 21 inches of sea level rise in the 2050s. The site stays inland, but low-lying routes to it may flood more often.",
+            "refs": [{ "name": "Climate Ready Boston (2016) · Executive summary", "url": "https://www.boston.gov/sites/default/files/file/2023/03/2016_climate_ready_boston_executive_summary_1.pdf" }]
+          }
+        }
+      }
+    },
+    {
+      "id": "boston-seaport",
+      "label": "Seaport Blvd, Boston, MA",
+      "region": "South Boston Waterfront · Boston, Massachusetts",
+      "match": ["seaport", "fan pier", "south boston waterfront", "seaport blvd"],
+      "hazards": {
+        "heat": {
+          "present": {
+            "risk": "moderate",
+            "text": "Large paved plazas and few street trees raise surface temperatures, although harbor breezes give some relief.",
+            "refs": [{ "name": "EPA · Reduce Heat Islands", "url": "https://www.epa.gov/green-infrastructure/reduce-heat-islands" }]
+          },
+          "future": {
+            "risk": "high",
+            "text": "More frequent hot days are projected for Boston by mid-century, adding to heat stress in hardscaped districts.",
+            "refs": [{ "name": "Climate Ready Boston (2016) · BRAG projections report", "url": "https://www.boston.gov/sites/default/files/document-file-12-2016/brag_report_-_final.pdf" }]
+          }
+        },
+        "flood": {
+          "present": {
+            "risk": "moderate",
+            "text": "Low ground near the water drains slowly during heavy rain and high tide. Confirm the flood zone on FEMA's flood map.",
+            "refs": [{ "name": "FEMA Flood Map Service Center", "url": "https://msc.fema.gov/portal/home" }]
+          },
+          "future": {
+            "risk": "high",
+            "text": "Higher seas reduce how well storm drains can empty into the harbor, so rain and tide flooding are likely to overlap more often.",
+            "refs": []
+          }
+        },
+        "coastal": {
+          "present": {
+            "risk": "high",
+            "text": "A low-lying waterfront site that is directly exposed to coastal storms and storm surge from Boston Harbor.",
+            "refs": [{ "name": "FEMA Flood Map Service Center", "url": "https://msc.fema.gov/portal/home" }]
+          },
+          "future": {
+            "risk": "high",
+            "text": "Climate Ready Boston plans for about 21 inches of sea level rise in the 2050s, which would let storm surge reach farther inland here.",
+            "refs": [{ "name": "Climate Ready Boston (2016) · Executive summary", "url": "https://www.boston.gov/sites/default/files/file/2023/03/2016_climate_ready_boston_executive_summary_1.pdf" }]
+          }
+        }
+      }
+    },
+    {
+      "id": "kathmandu",
+      "label": "Kathmandu, Nepal",
+      "region": "Kathmandu Valley · Bagmati Province, Nepal",
+      "match": ["kathmandu", "thamel", "lalitpur", "patan", "bhaktapur", "nepal"],
+      "hazards": {
+        "earthquake": {
+          "present": {
+            "risk": "high",
+            "text": "The Kathmandu Valley sits in the active Himalayan collision zone. The 2015 M7.8 Gorkha earthquake was centered about 80 km to the northwest.",
+            "refs": [{ "name": "USGS · M7.8 Gorkha, Nepal earthquake (2015)", "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us20002926" }]
+          },
+          "future": {
+            "risk": "high",
+            "text": "Earthquake hazard does not change on climate timescales. ThinkHazard! advises considering earthquake impact in every phase of design and construction in Nepal.",
+            "refs": [{ "name": "ThinkHazard! (GFDRR) · Nepal earthquake", "url": "https://thinkhazard.org/en/report/175-nepal/EQ" }]
+          }
+        },
+        "heat": {
+          "present": {
+            "risk": "low",
+            "text": "The valley's elevation keeps temperatures moderate, but dense brick and concrete neighborhoods are noticeably warmer than open land.",
+            "refs": []
+          },
+          "future": {
+            "risk": "moderate",
+            "text": "Continued urban growth and warming summers could make heat a bigger concern in the densest parts of the city.",
+            "refs": []
+          }
+        },
+        "flood": {
+          "present": {
+            "risk": "moderate",
+            "text": "Monsoon downpours can cause urban flooding near rivers and in areas with limited drainage.",
+            "refs": []
+          },
+          "future": {
+            "risk": "high",
+            "text": "More paved surfaces and heavier monsoon bursts would send more runoff to the same rivers and drains.",
+            "refs": []
+          }
+        },
+        "coastal": {
+          "present": {
+            "risk": "low",
+            "text": "Nepal is landlocked, so there is no sea level rise or storm surge exposure.",
+            "refs": []
+          },
+          "future": {
+            "risk": "low",
+            "text": "No coastal exposure in 2050 either.",
+            "refs": []
+          }
+        }
+      }
+    }
+  ]
+}
