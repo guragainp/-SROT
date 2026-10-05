@@ -340,8 +340,8 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
     <div class="nav-pill" onclick="navClick(this,'materials-db')">Materials DB</div>
     <div class="nav-pill" onclick="navClick(this,'circular-economy')">Circular economy</div>
     <div class="nav-pill">Emerging</div>
-    <div class="nav-pill">Research</div>
-    <div class="nav-pill">Community</div>
+    <div class="nav-pill" onclick="navClick(this,'research')">Research</div>
+    <div class="nav-pill" onclick="navClick(this,'community')">Community</div>
   </div>
 </div>
 
@@ -460,43 +460,6 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
       </div>
     </div>
 
-    <!-- COMMUNITY KNOWLEDGE -->
-    <div class="left-section subtle" style="flex:1">
-      <div class="eyebrow"><i class="ti ti-users"></i> Community</div>
-      <div class="upload-zone-sm">
-        <i class="ti ti-upload" style="font-size:18px;color:var(--text-tertiary);display:block;margin-bottom:6px"></i>
-        <div style="font-size:12px;font-weight:500;margin-bottom:4px">Share your data</div>
-        <div style="font-size:10px;color:var(--text-secondary);line-height:1.6">Upload papers, case studies, EPDs, or built project records to the SROT knowledge base.</div>
-      </div>
-      <div class="divider-label" style="margin-top:14px">
-        <div class="divider-line"></div>
-        <span>Example contributions</span>
-        <div class="divider-line"></div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <div class="contrib-item">
-          <div class="contrib-av av-teal">AR</div>
-          <div><div class="contrib-name">Aarav Rao</div><div class="contrib-type">LCA: Bamboo structural, India</div></div>
-          <div class="contrib-time">2h ago</div>
-        </div>
-        <div class="contrib-item">
-          <div class="contrib-av av-blue">SK</div>
-          <div><div class="contrib-name">Sara Kovač</div><div class="contrib-type">Built: Rammed earth, Croatia</div></div>
-          <div class="contrib-time">5h ago</div>
-        </div>
-        <div class="contrib-item">
-          <div class="contrib-av av-amber">JO</div>
-          <div><div class="contrib-name">James Osei</div><div class="contrib-type">Innovation: Mycelium pilot, Ghana</div></div>
-          <div class="contrib-time">1d ago</div>
-        </div>
-        <div class="contrib-item">
-          <div class="contrib-av av-purple">ML</div>
-          <div><div class="contrib-name">Meera Lal</div><div class="contrib-type">Vernacular: Rajasthani stone, India</div></div>
-          <div class="contrib-time">2d ago</div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <!-- ═══════════════════════════════ RIGHT COLUMN ═══════════════════════════════ -->
@@ -564,66 +527,6 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
     <!-- SUSTAINABILITY INSIGHTS (hidden until analysis) -->
     <div id="screen-insights" style="display:none">
 
-      <!-- CARBON TABLE -->
-      <div class="section">
-        <div class="section-title"><i class="ti ti-leaf"></i> Carbon emissions by material</div>
-        <table class="carbon-table">
-          <thead>
-            <tr>
-              <th style="width:150px">Material</th>
-              <th>Embodied carbon</th>
-              <th>Lifecycle impact</th>
-              <th style="width:80px">Visual</th>
-              <th>Rating</th>
-            </tr>
-          </thead>
-          <tbody id="carbon-tbody"></tbody>
-        </table>
-      </div>
-
-      <!-- INSIGHTS GRID -->
-      <div class="section subtle">
-        <div class="section-title"><i class="ti ti-chart-dots"></i> Sustainability insights</div>
-        <div class="insights-grid">
-          <div class="insight-card">
-            <div class="insight-ico-wrap ii-teal"><i class="ti ti-recycle"></i></div>
-            <div class="insight-title">Circular economy impact</div>
-            <div class="insight-desc">Your selected materials have mixed circular potential. Steel scores highest for recyclability (95%+). Mass timber and reclaimed wood lead on reuse. Concrete and vinyl perform poorly at end-of-life — prioritize designing for disassembly.</div>
-            <span class="insight-tag it-teal">Reuse · Recycle · Recover</span>
-          </div>
-          <div class="insight-card">
-            <div class="insight-ico-wrap ii-amber"><i class="ti ti-tool"></i></div>
-            <div class="insight-title">US supply chain availability</div>
-            <div class="insight-desc">Most low-carbon alternatives (EAF steel, fly ash concrete, FSC timber, mineral wool insulation) are stocked by major US distributors — Ferguson, Builders FirstSource, and regional lumber yards. Lead times are typically the same as conventional materials.</div>
-            <span class="insight-tag it-amber">Available nationally</span>
-          </div>
-          <div class="insight-card">
-            <div class="insight-ico-wrap ii-blue"><i class="ti ti-map-2"></i></div>
-            <div class="insight-title">Regional climate performance</div>
-            <div class="insight-desc">US climate zones 1–3 (Sun Belt) benefit most from thermal mass, cool roofs, and high-R walls. Zones 5–7 (Northeast, Midwest, Mountain) prioritize airtightness and continuous insulation. Match your material choices to ASHRAE 90.1 zone requirements for maximum performance.</div>
-            <span class="insight-tag it-blue">Climate-responsive design</span>
-          </div>
-          <div class="insight-card">
-            <div class="insight-ico-wrap ii-purple"><i class="ti ti-building-arch"></i></div>
-            <div class="insight-title">Green building code & incentives</div>
-            <div class="insight-desc">The 2024 editions of the IBC and IECC are now published, and many states have adopted the 2021 or 2024 codes, including the tall mass timber provisions. LEED v5, the Living Building Challenge, and Buy Clean policies in states such as California, Colorado, and New York increasingly require embodied carbon reporting. Federal 45L and 179D efficiency tax credits were cut short in 2025 and generally don&#39;t apply to projects that started after June 30, 2026, so check for state and utility incentives instead.</div>
-            <span class="insight-tag it-purple">Code-compliant pathways</span>
-          </div>
-          <div class="insight-card">
-            <div class="insight-ico-wrap ii-green"><i class="ti ti-map-pin"></i></div>
-            <div class="insight-title">Local availability & low-mile sourcing</div>
-            <div class="insight-desc">Mass timber from PNW or Southeast mills, brick from Midwest kilns, and recycled steel from regional mini-mills can significantly reduce transport carbon. Local sourcing within 500 miles is achievable for most structural materials across the continental US.</div>
-            <span class="insight-tag it-teal">Low-mile materials</span>
-          </div>
-          <div class="insight-card">
-            <div class="insight-ico-wrap ii-gray"><i class="ti ti-refresh"></i></div>
-            <div class="insight-title">Material lifecycle & reuse potential</div>
-            <div class="insight-desc">End-of-life recovery is highest for structural steel (95% recycling rate in the US), reclaimed brick, and mass timber (reuse or biomass energy). Vinyl, EIFS, and carpet have the weakest end-of-life story — consider designing these elements for replacement and upgrade.</div>
-            <span class="insight-tag it-teal">End-of-life planning</span>
-          </div>
-        </div>
-      </div>
-
       <!-- VERNACULAR PRECEDENTS -->
       <div class="section">
         <div class="section-title"><i class="ti ti-world"></i> Vernacular precedents & built projects</div>
@@ -669,41 +572,45 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
         </div>
       </div>
 
-      <!-- RESEARCH FEED -->
-      <div class="section">
-        <div class="section-title"><i class="ti ti-file-text"></i> Research & tools</div>
-        <div class="research-list">
-          <div class="research-item">
-            <div class="r-dot" style="background:#1D9E75"></div>
-            <div style="flex:1">
-              <div class="r-title">EC3: Embodied Carbon in Construction Calculator (free database of 100,000+ EPDs)</div>
-              <div class="r-meta"><span>Building Transparency</span><span class="r-tag">Embodied carbon</span><span class="r-tag">EPDs</span><span class="r-tag">Free tool</span></div>
-              <a class="r-action" href="https://www.buildingtransparency.org/" target="_blank" rel="noopener" style="text-decoration:none"><i class="ti ti-external-link"></i> Open resource</a>
-            </div>
+      <!-- INSIGHTS GRID -->
+      <div class="section subtle">
+        <div class="section-title"><i class="ti ti-chart-dots"></i> Sustainability insights</div>
+        <div class="insights-grid">
+          <div class="insight-card">
+            <div class="insight-ico-wrap ii-teal"><i class="ti ti-recycle"></i></div>
+            <div class="insight-title">Circular economy impact</div>
+            <div class="insight-desc">Your selected materials have mixed circular potential. Steel scores highest for recyclability (95%+). Mass timber and reclaimed wood lead on reuse. Concrete and vinyl perform poorly at end-of-life — prioritize designing for disassembly.</div>
+            <span class="insight-tag it-teal">Reuse · Recycle · Recover</span>
           </div>
-          <div class="research-item">
-            <div class="r-dot" style="background:#185FA5"></div>
-            <div style="flex:1">
-              <div class="r-title">Embodied Carbon Benchmark Study (2023 update)</div>
-              <div class="r-meta"><span>Carbon Leadership Forum · University of Washington</span><span class="r-tag">Benchmarks</span><span class="r-tag">Whole-building LCA</span><span class="r-tag">Open access</span></div>
-              <a class="r-action" href="https://carbonleadershipforum.org/" target="_blank" rel="noopener" style="text-decoration:none"><i class="ti ti-external-link"></i> Open resource</a>
-            </div>
+          <div class="insight-card">
+            <div class="insight-ico-wrap ii-amber"><i class="ti ti-tool"></i></div>
+            <div class="insight-title">US supply chain availability</div>
+            <div class="insight-desc">Most low-carbon alternatives (EAF steel, fly ash concrete, FSC timber, mineral wool insulation) are stocked by major US distributors — Ferguson, Builders FirstSource, and regional lumber yards. Lead times are typically the same as conventional materials.</div>
+            <span class="insight-tag it-amber">Available nationally</span>
           </div>
-          <div class="research-item">
-            <div class="r-dot" style="background:#534AB7"></div>
-            <div style="flex:1">
-              <div class="r-title">Inventory of Carbon & Energy (ICE) database</div>
-              <div class="r-meta"><span>Circular Ecology</span><span class="r-tag">Material carbon factors</span><span class="r-tag">Free download</span></div>
-              <a class="r-action" href="https://circularecology.com/embodied-carbon-footprint-database.html" target="_blank" rel="noopener" style="text-decoration:none"><i class="ti ti-external-link"></i> Open resource</a>
-            </div>
+          <div class="insight-card">
+            <div class="insight-ico-wrap ii-blue"><i class="ti ti-map-2"></i></div>
+            <div class="insight-title">Regional climate performance</div>
+            <div class="insight-desc">US climate zones 1–3 (Sun Belt) benefit most from thermal mass, cool roofs, and high-R walls. Zones 5–7 (Northeast, Midwest, Mountain) prioritize airtightness and continuous insulation. Match your material choices to ASHRAE 90.1 zone requirements for maximum performance.</div>
+            <span class="insight-tag it-blue">Climate-responsive design</span>
           </div>
-          <div class="research-item">
-            <div class="r-dot" style="background:#BA7517"></div>
-            <div style="flex:1">
-              <div class="r-title">Mass timber projects map and design resources</div>
-              <div class="r-meta"><span>WoodWorks Wood Products Council</span><span class="r-tag">Mass timber</span><span class="r-tag">Case studies</span><span class="r-tag">US projects</span></div>
-              <a class="r-action" href="https://www.woodworks.org/" target="_blank" rel="noopener" style="text-decoration:none"><i class="ti ti-external-link"></i> Open resource</a>
-            </div>
+          <div class="insight-card">
+            <div class="insight-ico-wrap ii-purple"><i class="ti ti-building-arch"></i></div>
+            <div class="insight-title">Green building code & incentives</div>
+            <div class="insight-desc">The 2024 editions of the IBC and IECC are now published, and many states have adopted the 2021 or 2024 codes, including the tall mass timber provisions. LEED v5, the Living Building Challenge, and Buy Clean policies in states such as California, Colorado, and New York increasingly require embodied carbon reporting. Federal 45L and 179D efficiency tax credits were cut short in 2025 and generally don&#39;t apply to projects that started after June 30, 2026, so check for state and utility incentives instead.</div>
+            <span class="insight-tag it-purple">Code-compliant pathways</span>
+          </div>
+          <div class="insight-card">
+            <div class="insight-ico-wrap ii-green"><i class="ti ti-map-pin"></i></div>
+            <div class="insight-title">Local availability & low-mile sourcing</div>
+            <div class="insight-desc">Mass timber from PNW or Southeast mills, brick from Midwest kilns, and recycled steel from regional mini-mills can significantly reduce transport carbon. Local sourcing within 500 miles is achievable for most structural materials across the continental US.</div>
+            <span class="insight-tag it-teal">Low-mile materials</span>
+          </div>
+          <div class="insight-card">
+            <div class="insight-ico-wrap ii-gray"><i class="ti ti-refresh"></i></div>
+            <div class="insight-title">Material lifecycle & reuse potential</div>
+            <div class="insight-desc">End-of-life recovery is highest for structural steel (95% recycling rate in the US), reclaimed brick, and mass timber (reuse or biomass energy). Vinyl, EIFS, and carpet have the weakest end-of-life story — consider designing these elements for replacement and upgrade.</div>
+            <span class="insight-tag it-teal">End-of-life planning</span>
           </div>
         </div>
       </div>
@@ -746,6 +653,105 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
   </div>
 </div>
 
+
+<!-- RESEARCH OVERLAY -->
+<div class="overlay-panel" id="panel-research">
+  <div class="overlay-header">
+    <div>
+      <div class="overlay-title"><i class="ti ti-file-text"></i> Research</div>
+      <div class="overlay-subtitle">Databases, benchmarks, and tools for embodied carbon and material selection</div>
+    </div>
+    <button class="overlay-close" onclick="closeOverlay('panel-research')">← Back to Analyse</button>
+  </div>
+  <div class="overlay-body">
+      <div class="section">
+        <div class="section-title"><i class="ti ti-file-text"></i> Research & tools</div>
+        <div class="research-list">
+          <div class="research-item">
+            <div class="r-dot" style="background:#1D9E75"></div>
+            <div style="flex:1">
+              <div class="r-title">EC3: Embodied Carbon in Construction Calculator (free database of 100,000+ EPDs)</div>
+              <div class="r-meta"><span>Building Transparency</span><span class="r-tag">Embodied carbon</span><span class="r-tag">EPDs</span><span class="r-tag">Free tool</span></div>
+              <a class="r-action" href="https://www.buildingtransparency.org/" target="_blank" rel="noopener" style="text-decoration:none"><i class="ti ti-external-link"></i> Open resource</a>
+            </div>
+          </div>
+          <div class="research-item">
+            <div class="r-dot" style="background:#185FA5"></div>
+            <div style="flex:1">
+              <div class="r-title">Embodied Carbon Benchmark Study (2023 update)</div>
+              <div class="r-meta"><span>Carbon Leadership Forum · University of Washington</span><span class="r-tag">Benchmarks</span><span class="r-tag">Whole-building LCA</span><span class="r-tag">Open access</span></div>
+              <a class="r-action" href="https://carbonleadershipforum.org/" target="_blank" rel="noopener" style="text-decoration:none"><i class="ti ti-external-link"></i> Open resource</a>
+            </div>
+          </div>
+          <div class="research-item">
+            <div class="r-dot" style="background:#534AB7"></div>
+            <div style="flex:1">
+              <div class="r-title">Inventory of Carbon & Energy (ICE) database</div>
+              <div class="r-meta"><span>Circular Ecology</span><span class="r-tag">Material carbon factors</span><span class="r-tag">Free download</span></div>
+              <a class="r-action" href="https://circularecology.com/embodied-carbon-footprint-database.html" target="_blank" rel="noopener" style="text-decoration:none"><i class="ti ti-external-link"></i> Open resource</a>
+            </div>
+          </div>
+          <div class="research-item">
+            <div class="r-dot" style="background:#BA7517"></div>
+            <div style="flex:1">
+              <div class="r-title">Mass timber projects map and design resources</div>
+              <div class="r-meta"><span>WoodWorks Wood Products Council</span><span class="r-tag">Mass timber</span><span class="r-tag">Case studies</span><span class="r-tag">US projects</span></div>
+              <a class="r-action" href="https://www.woodworks.org/" target="_blank" rel="noopener" style="text-decoration:none"><i class="ti ti-external-link"></i> Open resource</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  </div>
+</div>
+
+<!-- COMMUNITY OVERLAY -->
+<div class="overlay-panel" id="panel-community">
+  <div class="overlay-header">
+    <div>
+      <div class="overlay-title"><i class="ti ti-users"></i> Community</div>
+      <div class="overlay-subtitle">Share papers, case studies, EPDs, and built project records with the SROT knowledge base</div>
+    </div>
+    <button class="overlay-close" onclick="closeOverlay('panel-community')">← Back to Analyse</button>
+  </div>
+  <div class="overlay-body">
+    <div class="section">
+      <div class="upload-zone-sm">
+        <i class="ti ti-upload" style="font-size:18px;color:var(--text-tertiary);display:block;margin-bottom:6px"></i>
+        <div style="font-size:12px;font-weight:500;margin-bottom:4px">Share your data</div>
+        <div style="font-size:10px;color:var(--text-secondary);line-height:1.6">Upload papers, case studies, EPDs, or built project records to the SROT knowledge base.</div>
+      </div>
+      <div class="divider-label" style="margin-top:14px">
+        <div class="divider-line"></div>
+        <span>Example contributions</span>
+        <div class="divider-line"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="contrib-item">
+          <div class="contrib-av av-teal">AR</div>
+          <div><div class="contrib-name">Aarav Rao</div><div class="contrib-type">LCA: Bamboo structural, India</div></div>
+          <div class="contrib-time">2h ago</div>
+        </div>
+        <div class="contrib-item">
+          <div class="contrib-av av-blue">SK</div>
+          <div><div class="contrib-name">Sara Kovač</div><div class="contrib-type">Built: Rammed earth, Croatia</div></div>
+          <div class="contrib-time">5h ago</div>
+        </div>
+        <div class="contrib-item">
+          <div class="contrib-av av-amber">JO</div>
+          <div><div class="contrib-name">James Osei</div><div class="contrib-type">Innovation: Mycelium pilot, Ghana</div></div>
+          <div class="contrib-time">1d ago</div>
+        </div>
+        <div class="contrib-item">
+          <div class="contrib-av av-purple">ML</div>
+          <div><div class="contrib-name">Meera Lal</div><div class="contrib-type">Vernacular: Rajasthani stone, India</div></div>
+          <div class="contrib-time">2d ago</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 <!-- CIRCULAR ECONOMY OVERLAY -->
 <div class="overlay-panel" id="panel-circular-economy">
   <div class="overlay-header">
@@ -1159,6 +1165,7 @@ function renderCarbonBars(highlighted) {
 // ─── RENDER INSIGHTS TABLE ───
 function renderInsights() {
   const tbody = document.getElementById('carbon-tbody');
+  if (!tbody) return;
   const maxC = Math.max(...userMaterials.map(m => (MATERIAL_DATA[m]||{carbon:200}).carbon), 250);
   tbody.innerHTML = userMaterials.map(m => {
     const d = MATERIAL_DATA[m] || { carbon:120, lifecycle:'med', color:'#9A9A96' };
@@ -1237,6 +1244,8 @@ function navClick(pill, target) {
   } else if (target === 'circular-economy') {
     document.getElementById('panel-circular-economy').classList.add('show');
     loadCircularEconomy();
+  } else if (target === 'research' || target === 'community') {
+    document.getElementById('panel-' + target).classList.add('show');
   }
 }
 
