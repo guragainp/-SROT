@@ -43,7 +43,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 28px; border-bottom: 0.5px solid var(--border); background: var(--bg-card); position: sticky; top: 0; z-index: 100; }
 .logo { display: flex; align-items: baseline; gap: 6px; }
 .logo-name { font-family: var(--deva); font-size: 22px; font-weight: 700; color: var(--green-deep); letter-spacing: 0.06em; }
-.logo-deva { font-family: var(--deva); font-size: 22px; font-weight: 700; color: var(--green-deep); }
+.logo-deva { font-family: var(--deva); font-size: 22px; font-weight: 500; color: var(--green-deep); }
 .logo-tag { font-family: var(--sans); font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.1em; text-transform: uppercase; }
 .nav-pills { display: flex; gap: 4px; flex-wrap: wrap; }
 .nav-pill { font-family: var(--sans); font-size: 12px; padding: 5px 13px; border-radius: 20px; border: 0.5px solid var(--border); color: var(--text-secondary); cursor: pointer; background: transparent; transition: all 0.15s; }
@@ -326,15 +326,14 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ─── FRONT PAGE (module chooser) ─── */
-.home-view { max-width: 980px; margin: 0 auto; padding: 56px 28px 64px; }
-.home-hero { text-align: center; margin-bottom: 36px; }
-.home-title { font-family: var(--deva); font-size: 26px; font-weight: 700; color: var(--green-deep); margin-bottom: 8px; display: flex; justify-content: center; align-items: baseline; gap: 10px; }
-.home-title .logo-deva, .home-title .logo-name { font-size: 26px; }
-.home-meaning { font-size: 12px; color: var(--text-tertiary); max-width: 560px; margin: 0 auto 14px; line-height: 1.6; font-style: italic; }
-.home-meaning .logo-deva { font-style: normal; }
+.home-view { padding: 0 0 64px; }
+.home-hero { text-align: center; margin: 0 0 36px; padding: 40px 28px 36px; background: var(--green-xpale); border-bottom: 0.5px solid var(--green-pale); }
+.home-title { max-width: 760px; margin: 0 auto 14px; line-height: 1.5; }
+.home-title .logo-deva, .home-title .logo-name { font-size: 26px; margin-right: 6px; }
+.home-meaning-inline { font-size: 14px; color: var(--text-secondary); }
 .home-tagline { font-family: var(--serif); font-size: 17px; font-weight: 700; color: var(--text-primary); max-width: 560px; margin: 0 auto 10px; line-height: 1.4; }
 .home-sub { font-size: 13px; color: var(--text-secondary); max-width: 600px; margin: 0 auto; line-height: 1.6; }
-.home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 980px; margin: 0 auto; padding: 0 28px; }
 .home-card { text-align: left; font-family: var(--sans); border: 0.5px solid var(--border); border-radius: 12px; padding: 22px; background: var(--bg-card); cursor: pointer; transition: border-color 0.15s, background 0.15s; display: flex; flex-direction: column; gap: 10px; color: var(--text-primary); }
 .home-card:hover, .home-card:focus-visible { border-color: var(--green-light); background: var(--green-xpale); outline: none; }
 .home-card .comp-icon { margin: 0; width: 40px; height: 40px; font-size: 19px; }
@@ -387,7 +386,9 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
   .prec-grid, .em-grid, .insights-grid, .mat-db-grid, .circ-grid { grid-template-columns: 1fr; }
   .overlay-panel { left: 0; top: 0; }
   .overlay-header { padding: 14px 16px; flex-wrap: wrap; gap: 10px; }
-  .home-view { padding: 32px 16px 40px; }
+  .home-view { padding: 0 0 40px; }
+  .home-hero { padding: 28px 16px; margin-bottom: 24px; }
+  .home-grid { padding: 0 16px; }
   .home-grid { grid-template-columns: 1fr; }
   .si-layout { grid-template-columns: 1fr; }
   .si-main { border-right: none; }
@@ -422,9 +423,8 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 <!-- FRONT PAGE -->
 <div class="home-view" id="view-home">
   <div class="home-hero">
-    <div class="home-title"><span class="logo-deva">स्रोत</span><span class="logo-name">SROT</span></div>
-    <div class="home-meaning"><span class="logo-deva" style="font-size:14px">स्रोत</span> Srot — means ‘source’ in Nepali and Sanskrit. This project is an attempt to become a source of better decisions for Sustainable Nepal.</div>
-    <div class="home-tagline">Material intelligence for a lower-carbon built better Nepal.</div>
+    <div class="home-title"><span class="logo-deva">स्रोत</span><span class="logo-name">SROT</span><span class="home-meaning-inline">— means ‘source’ in Nepali and Sanskrit. This project is an attempt to become a source of better decisions for Sustainable world.</span></div>
+    <div class="home-tagline">Material intelligence for a lower-carbon built better world.</div>
     <div class="home-sub">Srot is a design platform that unites carbon analysis, material research, AI recommendations, and real-world precedents — so architects and designers can make smarter, faster, and more sustainable choices without leaving their workflow.</div>
   </div>
   <div class="home-grid">
