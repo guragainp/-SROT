@@ -324,13 +324,80 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 .loading-state i { font-size: 28px; }
 .loading-spinner { width: 28px; height: 28px; border: 2px solid var(--border); border-top-color: var(--green-mid); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── FRONT PAGE (module chooser) ─── */
+.home-view { max-width: 980px; margin: 0 auto; padding: 56px 28px 64px; }
+.home-hero { text-align: center; margin-bottom: 36px; }
+.home-title { font-family: var(--serif); font-size: 26px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+.home-title .logo-deva { font-size: 20px; margin-left: 4px; }
+.home-sub { font-size: 13px; color: var(--text-secondary); max-width: 520px; margin: 0 auto; line-height: 1.6; }
+.home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.home-card { text-align: left; font-family: var(--sans); border: 0.5px solid var(--border); border-radius: 12px; padding: 22px; background: var(--bg-card); cursor: pointer; transition: border-color 0.15s, background 0.15s; display: flex; flex-direction: column; gap: 10px; color: var(--text-primary); }
+.home-card:hover, .home-card:focus-visible { border-color: var(--green-light); background: var(--green-xpale); outline: none; }
+.home-card .comp-icon { margin: 0; width: 40px; height: 40px; font-size: 19px; }
+.home-card-title { font-family: var(--serif); font-size: 16px; font-weight: 700; }
+.home-card-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; flex: 1; }
+.home-card-cta { font-size: 11px; font-weight: 500; color: var(--green-deep); display: flex; align-items: center; gap: 4px; }
+
+/* ─── SITE INTELLIGENCE MODULE ─── */
+.si-view { min-height: calc(100vh - 57px); }
+.si-search { display: flex; gap: 10px; align-items: center; }
+.si-chip-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.si-layout { display: grid; grid-template-columns: 1fr 300px; align-items: start; }
+.si-main { border-right: 0.5px solid var(--border); min-width: 0; }
+.si-side { padding: 20px 20px; }
+.si-site-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+.si-sample-note { font-size: 10px; color: #854F0B; background: var(--amber-pale); border-radius: 8px; padding: 8px 10px; max-width: 340px; line-height: 1.5; display: flex; gap: 6px; }
+.si-sample-note i { font-size: 13px; }
+.si-hazard-list { display: flex; flex-direction: column; gap: 10px; }
+.si-hazard { background: var(--bg-card); }
+.si-hazard-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.si-hazard-sub { font-size: 10px; color: var(--text-tertiary); }
+.si-periods { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.si-period { border: 0.5px solid var(--border); border-radius: 9px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.si-period-head { display: flex; justify-content: space-between; align-items: center; }
+.si-source { display: flex; flex-direction: column; gap: 2px; padding-top: 6px; border-top: 0.5px solid var(--border); margin-top: auto; }
+.si-source .mat-db-link { margin-top: 2px; }
+.si-data-badge { align-self: flex-start; display: inline-flex; align-items: center; gap: 3px; font-size: 9px; padding: 2px 7px; border-radius: 4px; background: var(--amber-pale); color: #854F0B; font-weight: 500; }
+.si-noref { font-size: 9px; color: var(--text-tertiary); }
+.si-strat-group { margin-bottom: 16px; }
+.si-strat-group:last-child { margin-bottom: 0; }
+.si-strat { align-items: flex-start; }
+.si-save { flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; }
+.si-saved-list { display: flex; flex-direction: column; gap: 6px; }
+.si-count { font-size: 9px; padding: 1px 6px; border-radius: 20px; background: var(--green-pale); color: var(--green-deep); }
+.si-error i { color: var(--red); }
+
+/* ─── MOBILE (≤ 860px) — layout only; desktop styles above are unchanged ─── */
+@media (max-width: 860px) {
+  .top-bar { flex-wrap: wrap; gap: 10px; padding: 12px 16px; }
+  .nav-pills { overflow-x: auto; flex-wrap: nowrap; max-width: 100%; padding-bottom: 2px; }
+  .nav-pill { white-space: nowrap; }
+  .page-body { grid-template-columns: 1fr; }
+  .left-col { border-right: none; border-bottom: 0.5px solid var(--border); }
+  .left-section, .section, .overlay-body { padding-left: 16px; padding-right: 16px; }
+  .comp-grid { grid-template-columns: repeat(3, 1fr); }
+  .three-col { grid-template-columns: 1fr; }
+  .col-panel { border-right: none; border-bottom: 0.5px solid var(--border); }
+  .prec-grid, .em-grid, .insights-grid, .mat-db-grid, .circ-grid { grid-template-columns: 1fr; }
+  .overlay-panel { left: 0; top: 0; }
+  .overlay-header { padding: 14px 16px; flex-wrap: wrap; gap: 10px; }
+  .home-view { padding: 32px 16px 40px; }
+  .home-grid { grid-template-columns: 1fr; }
+  .si-layout { grid-template-columns: 1fr; }
+  .si-main { border-right: none; }
+  .si-side { border-top: 0.5px solid var(--border); padding: 20px 16px; }
+  .si-periods { grid-template-columns: 1fr; }
+  .si-search { flex-wrap: wrap; }
+  .si-search .overlay-search-inp { min-width: 0; width: 100%; flex-basis: 100%; }
+}
 </style>
 </head>
 <body>
 
 <!-- TOP BAR -->
 <div class="top-bar">
-  <div class="logo">
+  <div class="logo" onclick="showView('home')" style="cursor:pointer" title="SROT home">
     <span class="logo-name">SROT</span>
     <span class="logo-deva">स्रोत</span>
     <span class="logo-tag">· Material intelligence</span>
@@ -342,11 +409,34 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
     <div class="nav-pill">Emerging</div>
     <div class="nav-pill" onclick="navClick(this,'research')">Research</div>
     <div class="nav-pill" onclick="navClick(this,'community')">Community</div>
+    <div class="nav-pill" id="nav-site" onclick="navClick(this,'site')">Site resilience</div>
+  </div>
+</div>
+
+<!-- FRONT PAGE -->
+<div class="home-view" id="view-home">
+  <div class="home-hero">
+    <div class="home-title">SROT <span class="logo-deva">स्रोत</span></div>
+    <div class="home-sub">Choose where to start: assess a building's materials, or analyze a site's exposure to natural hazards and long-term climate change.</div>
+  </div>
+  <div class="home-grid">
+    <button class="home-card" onclick="showView('site')">
+      <div class="comp-icon ic-blue"><i class="ti ti-map-pin"></i></div>
+      <div class="home-card-title">Site Resilience Analysis</div>
+      <div class="home-card-desc">Site analysis for natural disaster risk and long-term environmental effects.</div>
+      <div class="home-card-cta">Open Site Intelligence Module <i class="ti ti-arrow-right"></i></div>
+    </button>
+    <button class="home-card" onclick="showView('materials')">
+      <div class="comp-icon ic-teal"><i class="ti ti-package"></i></div>
+      <div class="home-card-title">Material Assessment</div>
+      <div class="home-card-desc">Upload a building model, compare your materials with lower-carbon alternatives, and explore precedents.</div>
+      <div class="home-card-cta">Open material assessment <i class="ti ti-arrow-right"></i></div>
+    </button>
   </div>
 </div>
 
 <!-- PAGE BODY -->
-<div class="page-body">
+<div class="page-body" id="view-materials" style="display:none">
 
   <!-- ═══════════════════════════════ LEFT COLUMN ═══════════════════════════════ -->
   <div class="left-col">
@@ -631,6 +721,33 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 
 </div>
 <!-- end page-body -->
+
+<!-- SITE INTELLIGENCE MODULE -->
+<div class="si-view" id="view-site" style="display:none">
+  <div class="overlay-header" style="top:57px">
+    <div>
+      <div class="overlay-title"><i class="ti ti-map-pin"></i> Site Intelligence Module</div>
+      <div class="overlay-subtitle">Site analysis for natural disaster risk and long-term environmental effects.</div>
+    </div>
+    <button class="overlay-close" onclick="showView('home')">← Home</button>
+  </div>
+  <div class="si-layout">
+    <div class="si-main">
+      <div class="section">
+        <div class="eyebrow"><i class="ti ti-search"></i> Site address</div>
+        <form class="si-search" onsubmit="event.preventDefault();siAnalyze()">
+          <input class="overlay-search-inp" id="si-address" type="text" autocomplete="street-address" placeholder="Enter a site address (e.g. 550 Huntington Ave, Boston, MA)" aria-label="Site address">
+          <button class="btn-primary" id="si-analyze-btn" type="submit">Analyze →</button>
+        </form>
+      </div>
+      <div id="si-results"></div>
+    </div>
+    <aside class="si-side">
+      <div class="eyebrow"><i class="ti ti-bookmark"></i> Saved Strategies <span class="si-count" id="si-saved-count">0</span></div>
+      <div class="si-saved-list" id="si-saved"></div>
+    </aside>
+  </div>
+</div>
 
 <!-- MATERIALS DB OVERLAY -->
 <div class="overlay-panel" id="panel-materials-db">
@@ -1234,7 +1351,24 @@ function resetAll() {
 selectComp('wall');
 
 // ─── NAV PILL ROUTING ───
+// ─── VIEWS: front page, material assessment, site intelligence ───
+function showView(name) {
+  closeAllOverlays();
+  ['home', 'materials', 'site'].forEach(v => {
+    const el = document.getElementById('view-' + v);
+    if (el) el.style.display = v === name ? '' : 'none';
+  });
+  document.querySelectorAll('.nav-pill').forEach((p, i) => {
+    p.classList.toggle('on', (name === 'materials' && i === 0) || (name === 'site' && p.id === 'nav-site'));
+  });
+  if (name === 'site') siInit();
+  if (location.hash !== '#' + name) history.replaceState(null, '', name === 'home' ? location.pathname : '#' + name);
+  window.scrollTo(0, 0);
+}
+
 function navClick(pill, target) {
+  if (target === 'site') { showView('site'); return; }
+  if (document.getElementById('view-materials').style.display === 'none') showView('materials');
   document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('on'));
   pill.classList.add('on');
   closeAllOverlays();
@@ -1463,6 +1597,15 @@ const FALLBACK_CIRC_DB = [
   { name:"Recycled Carpet Tile (Interface)", subtitle:"Modular carpet with take-back", icon_class:"ti-layout-grid", icon_bg:"#EEEDFE", icon_color:"#3C3489", reuse_score:30, recycle_score:80, recover_score:50, description:"Interface ReEntry and Shaw Cradle-to-Cradle programs collect used carpet tiles nationally for recycling into new product. Tiles can be individually replaced without full floor replacement.", strategies:["Manufacturer take-back","Cradle to Cradle","Individual replacement","Recycled into new product"], real_example:"Multiple corporate campuses and educational buildings nationally" },
 ];
 
+
+// open the view named in the URL hash (#site, #materials), else the front page
+function showViewFromHash() {
+  const v = location.hash.slice(1);
+  showView(['materials', 'site'].includes(v) ? v : 'home');
+}
+window.addEventListener('DOMContentLoaded', showViewFromHash);
+window.addEventListener('hashchange', showViewFromHash);
 </script>
+<script src="js/site-intelligence.js"></script>
 </body>
 </html>
