@@ -6,7 +6,7 @@
 <title>SROT · Material Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Noto+Serif+Devanagari:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Noto+Serif+Devanagari:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
 :root {
@@ -42,8 +42,8 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 /* ─── TOP BAR ─── */
 .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 28px; border-bottom: 0.5px solid var(--border); background: var(--bg-card); position: sticky; top: 0; z-index: 100; }
 .logo { display: flex; align-items: baseline; gap: 6px; }
-.logo-name { font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--green-deep); letter-spacing: 0.06em; }
-.logo-deva { font-family: var(--deva); font-size: 15px; color: var(--text-secondary); font-weight: 400; }
+.logo-name { font-family: var(--deva); font-size: 22px; font-weight: 700; color: var(--green-deep); letter-spacing: 0.06em; }
+.logo-deva { font-family: var(--deva); font-size: 22px; font-weight: 700; color: var(--green-deep); }
 .logo-tag { font-family: var(--sans); font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.1em; text-transform: uppercase; }
 .nav-pills { display: flex; gap: 4px; flex-wrap: wrap; }
 .nav-pill { font-family: var(--sans); font-size: 12px; padding: 5px 13px; border-radius: 20px; border: 0.5px solid var(--border); color: var(--text-secondary); cursor: pointer; background: transparent; transition: all 0.15s; }
@@ -328,8 +328,8 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 /* ─── FRONT PAGE (module chooser) ─── */
 .home-view { max-width: 980px; margin: 0 auto; padding: 56px 28px 64px; }
 .home-hero { text-align: center; margin-bottom: 36px; }
-.home-title { font-family: var(--serif); font-size: 26px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
-.home-title .logo-deva { font-size: 20px; margin-left: 4px; }
+.home-title { font-family: var(--deva); font-size: 26px; font-weight: 700; color: var(--green-deep); margin-bottom: 8px; display: flex; justify-content: center; align-items: baseline; gap: 10px; }
+.home-title .logo-deva, .home-title .logo-name { font-size: 26px; }
 .home-sub { font-size: 13px; color: var(--text-secondary); max-width: 520px; margin: 0 auto; line-height: 1.6; }
 .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .home-card { text-align: left; font-family: var(--sans); border: 0.5px solid var(--border); border-radius: 12px; padding: 22px; background: var(--bg-card); cursor: pointer; transition: border-color 0.15s, background 0.15s; display: flex; flex-direction: column; gap: 10px; color: var(--text-primary); }
@@ -360,7 +360,9 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 .si-source .mat-db-link { margin-top: 2px; }
 .si-data-badge { align-self: flex-start; display: inline-flex; align-items: center; gap: 3px; font-size: 9px; padding: 2px 7px; border-radius: 4px; background: var(--amber-pale); color: #854F0B; font-weight: 500; }
 .si-noref { font-size: 9px; color: var(--text-tertiary); }
-.si-strat-group { margin-bottom: 16px; }
+.si-hazard-foot { display: flex; justify-content: flex-end; margin-top: 10px; }
+.si-strat-btn { display: inline-flex; align-items: center; gap: 5px; }
+.si-strat-group { margin-bottom: 16px; scroll-margin-top: 150px; }
 .si-strat-group:last-child { margin-bottom: 0; }
 .si-strat { align-items: flex-start; }
 .si-save { flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; }
@@ -398,25 +400,26 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 <!-- TOP BAR -->
 <div class="top-bar">
   <div class="logo" onclick="showView('home')" style="cursor:pointer" title="SROT home">
-    <span class="logo-name">SROT</span>
     <span class="logo-deva">स्रोत</span>
+    <span class="logo-name">SROT</span>
     <span class="logo-tag">· Material intelligence</span>
   </div>
   <div class="nav-pills">
-    <div class="nav-pill on" onclick="navClick(this,'analyse')">Analyse</div>
+    <div class="nav-pill" id="nav-home" onclick="showView('home')">Home</div>
+    <div class="nav-pill" id="nav-site" onclick="navClick(this,'site')">Site resilience</div>
+    <div class="nav-pill on" id="nav-analyse" onclick="navClick(this,'analyse')">Analyse</div>
     <div class="nav-pill" onclick="navClick(this,'materials-db')">Materials DB</div>
     <div class="nav-pill" onclick="navClick(this,'circular-economy')">Circular economy</div>
     <div class="nav-pill">Emerging</div>
     <div class="nav-pill" onclick="navClick(this,'research')">Research</div>
     <div class="nav-pill" onclick="navClick(this,'community')">Community</div>
-    <div class="nav-pill" id="nav-site" onclick="navClick(this,'site')">Site resilience</div>
   </div>
 </div>
 
 <!-- FRONT PAGE -->
 <div class="home-view" id="view-home">
   <div class="home-hero">
-    <div class="home-title">SROT <span class="logo-deva">स्रोत</span></div>
+    <div class="home-title"><span class="logo-deva">स्रोत</span><span class="logo-name">SROT</span></div>
     <div class="home-sub">Choose where to start: assess a building's materials, or analyze a site's exposure to natural hazards and long-term climate change.</div>
   </div>
   <div class="home-grid">
@@ -710,7 +713,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 
     <!-- FOOTER inside right col -->
     <div class="footer-bar" style="margin-top:auto">
-      <div class="footer-left">SROT · Material intelligence platform · <span style="font-family:var(--deva);font-size:12px">स्रोत</span></div>
+      <div class="footer-left"><span style="font-family:var(--deva);font-size:12px">स्रोत</span> · SROT · Material intelligence platform</div>
       <div style="display:flex;gap:8px">
         <button class="btn-primary" id="export-btn" style="display:none" onclick="alert('Export report — coming soon')">Export report</button>
       </div>
@@ -1358,9 +1361,8 @@ function showView(name) {
     const el = document.getElementById('view-' + v);
     if (el) el.style.display = v === name ? '' : 'none';
   });
-  document.querySelectorAll('.nav-pill').forEach((p, i) => {
-    p.classList.toggle('on', (name === 'materials' && i === 0) || (name === 'site' && p.id === 'nav-site'));
-  });
+  const tab = { home: 'nav-home', site: 'nav-site', materials: 'nav-analyse' }[name];
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.toggle('on', p.id === tab));
   if (name === 'site') siInit();
   if (location.hash !== '#' + name) history.replaceState(null, '', name === 'home' ? location.pathname : '#' + name);
   window.scrollTo(0, 0);
@@ -1389,7 +1391,7 @@ function closeAllOverlays() {
 
 function closeOverlay(id) {
   document.getElementById(id).classList.remove('show');
-  document.querySelectorAll('.nav-pill').forEach((p, i) => { if (i === 0) p.classList.add('on'); else p.classList.remove('on'); });
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.toggle('on', p.id === 'nav-analyse'));
 }
 
 // ─── MATERIALS DB — AI-POWERED ───

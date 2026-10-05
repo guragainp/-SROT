@@ -57,6 +57,7 @@ const SI_STRATEGIES = {
 
 let siData = null;          // loaded sample dataset
 let siCurrent = null;       // site currently shown
+let siOpen = [];            // hazard ids whose strategies the user has opened, in click order
 
 // ─── helpers ───
 function siEsc(s) {
@@ -179,6 +180,16 @@ function siPeriod(label, p) {
     </div>`;
 }
 
+function siStratButton(h, result) {
+  if (result.present.risk === 'low' && result.future.risk === 'low') {
+    return '<div class="si-hazard-sub">Low risk in both periods · no strategies needed</div>';
+  }
+  const open = siOpen.includes(h.id);
+  return `<button class="${open ? 'btn-primary' : 'btn-ghost'} si-strat-btn" aria-expanded="${open}" aria-controls="si-strategies" onclick="siToggleStrategies('${h.id}')">
+      <i class="ti ti-shield-check"></i> ${open ? 'Hide resilient strategies' : 'Resilient strategies'}
+    </button>`;
+}
+
 function siHazardCard(h, result) {
   return `<div class="insight-card si-hazard" id="si-hz-${h.id}">
       <div class="si-hazard-head">
@@ -192,6 +203,7 @@ function siHazardCard(h, result) {
         ${siPeriod('Present', result.present)}
         ${siPeriod('2050', result.future)}
       </div>
+      <div class="si-hazard-foot" id="si-btn-${h.id}">${siStratButton(h, result)}</div>
     </div>`;
 }
 
@@ -204,6 +216,7 @@ function siIdentified(site) {
 }
 
 function siRenderResults(site) {
+  siOpen = [];
   const cards = SI_HAZARDS.filter(h => site.hazards[h.id]).map(h => siHazardCard(h, site.hazards[h.id])).join('');
   siSetState('results', `
     <div class="section">
@@ -220,7 +233,7 @@ function siRenderResults(site) {
       <div class="section-title"><i class="ti ti-alert-triangle"></i> Hazard results · Present vs 2050</div>
       <div class="si-hazard-list">${cards}</div>
     </div>
-    <div class="section">
+    <div class="section" id="si-strat-section" hidden>
       <div class="section-title"><i class="ti ti-shield-check"></i> Resilient strategies</div>
       <div id="si-strategies"></div>
     </div>`);
@@ -232,13 +245,12 @@ function siIsSaved(id) { return siSaved.some(s => s.id === id); }
 function siRenderStrategies() {
   const el = document.getElementById('si-strategies');
   if (!el || !siCurrent) return;
-  const hz = siIdentified(siCurrent);
-  if (!hz.length) {
-    el.innerHTML = '<div class="empty-state-text">No moderate or high hazards were identified for this site.</div>';
-    return;
-  }
+  // Show only hazards the user opened with that hazard's "Resilient strategies" button.
+  const identified = siIdentified(siCurrent).map(h => h.id);
+  const hz = siOpen.filter(id => identified.includes(id)).map(id => SI_HAZARDS.find(h => h.id === id));
+  document.getElementById('si-strat-section').hidden = !hz.length;
   el.innerHTML = hz.map(h => `
-    <div class="si-strat-group">
+    <div class="si-strat-group" id="si-strat-${h.id}">
       <div class="eyebrow"><i class="ti ${h.icon}"></i> ${h.name}</div>
       <div class="em-grid">
         ${(SI_STRATEGIES[h.id] || []).map(s => {
@@ -256,6 +268,15 @@ function siRenderStrategies() {
         }).join('')}
       </div>
     </div>`).join('');
+}
+
+function siToggleStrategies(hazardId) {
+  const opening = !siOpen.includes(hazardId);
+  siOpen = opening ? [...siOpen, hazardId] : siOpen.filter(id => id !== hazardId);
+  const h = SI_HAZARDS.find(x => x.id === hazardId);
+  document.getElementById('si-btn-' + hazardId).innerHTML = siStratButton(h, siCurrent.hazards[hazardId]);
+  siRenderStrategies();
+  if (opening) document.getElementById('si-strat-' + hazardId).scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function siToggleSave(hazardId, strategyId) {
