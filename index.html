@@ -93,6 +93,16 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 .b-med { background: var(--amber-pale); color: #854F0B; }
 .b-low { background: #EAF3DE; color: #3B6D11; }
 
+/* ─── DIMENSIONS ─── */
+.dim-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 10px; }
+.dim-field label { display: block; font-size: 10px; color: var(--text-secondary); margin-bottom: 4px; }
+.dim-field .mat-input { width: 100%; box-sizing: border-box; }
+.dim-unit { position: relative; }
+.dim-unit span { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 10px; color: var(--text-tertiary); pointer-events: none; }
+.dim-unit .mat-input { padding-right: 30px; -moz-appearance: textfield; }
+.dim-unit .mat-input::-webkit-outer-spin-button, .dim-unit .mat-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.dim-hint { font-size: 10px; color: var(--text-tertiary); margin-top: 5px; line-height: 1.5; }
+
 /* ─── MATERIAL ADDER ─── */
 .mat-add-row { display: flex; gap: 7px; margin-bottom: 10px; align-items: center; }
 .mat-input { flex: 1; font-family: var(--sans); font-size: 12px; padding: 8px 11px; border: 0.5px solid var(--border); border-radius: 8px; background: var(--bg-card); color: var(--text-primary); outline: none; transition: border-color 0.15s; }
@@ -512,6 +522,30 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
           <span class="comp-badge b-high">High carbon</span>
         </div>
       </div>
+    </div>
+
+    <!-- DIMENSIONS -->
+    <div class="left-section">
+      <div class="eyebrow"><i class="ti ti-ruler-measure"></i> Dimensions</div>
+      <div class="dim-grid">
+        <div class="dim-field">
+          <label for="dim-length">Length</label>
+          <div class="dim-unit"><input class="mat-input" id="dim-length" type="number" min="0" step="any" placeholder="0" oninput="updateVolume()"><span>m</span></div>
+        </div>
+        <div class="dim-field">
+          <label for="dim-breadth">Breadth</label>
+          <div class="dim-unit"><input class="mat-input" id="dim-breadth" type="number" min="0" step="any" placeholder="0" oninput="updateVolume()"><span>m</span></div>
+        </div>
+        <div class="dim-field">
+          <label for="dim-height">Height</label>
+          <div class="dim-unit"><input class="mat-input" id="dim-height" type="number" min="0" step="any" placeholder="0" oninput="updateVolume()"><span>m</span></div>
+        </div>
+      </div>
+      <div class="dim-field">
+        <label for="dim-volume">Volume of material</label>
+        <div class="dim-unit"><input class="mat-input" id="dim-volume" type="number" min="0" step="any" placeholder="0" oninput="this.dataset.manual = this.value ? '1' : ''"><span>m³</span></div>
+      </div>
+      <div class="dim-hint">Volume fills in from length × breadth × height. Type your own value to override it.</div>
     </div>
 
     <!-- MATERIAL SELECTOR -->
@@ -1330,6 +1364,15 @@ function renderPrecedents() {
 }
 
 // ─── RESET ───
+function updateVolume() {
+  const vol = document.getElementById('dim-volume');
+  if (vol.dataset.manual) return;
+  const l = parseFloat(document.getElementById('dim-length').value);
+  const b = parseFloat(document.getElementById('dim-breadth').value);
+  const h = parseFloat(document.getElementById('dim-height').value);
+  vol.value = (l > 0 && b > 0 && h > 0) ? +(l * b * h).toFixed(3) : '';
+}
+
 function resetAll() {
   userMaterials = [];
   activeAlt = null;
@@ -1346,6 +1389,7 @@ function resetAll() {
   document.getElementById('upload-title').textContent = 'Drop your building model here';
   document.getElementById('upload-sub').textContent = 'Upload an IFC, Revit, or SketchUp file to begin material analysis. Your model stays private and is not stored.';
   document.getElementById('upload-success').style.display = 'none';
+  ['dim-length','dim-breadth','dim-height','dim-volume'].forEach(id => { const el = document.getElementById(id); el.value = ''; el.dataset.manual = ''; });
   document.getElementById('added-mats').innerHTML = '<span style="font-size:11px;color:var(--text-tertiary);padding:3px 0" id="mats-placeholder">No materials added yet</span>';
   document.getElementById('analyse-btn').disabled = true;
   document.querySelectorAll('.comp-card').forEach(c => c.classList.remove('on'));
