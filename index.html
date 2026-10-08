@@ -263,6 +263,23 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 .divider-label span { font-size: 10px; color: var(--text-tertiary); white-space: nowrap; }
 .divider-line { flex: 1; height: 0.5px; background: var(--border); }
 
+/* research contributions (formerly Community) */
+.upload-zone-sm { display: block; border: 1px dashed var(--border-mid); border-radius: 10px; padding: 18px 14px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--bg-card); }
+.upload-zone-sm:hover, .upload-zone-sm.dragover { background: var(--green-xpale); border-color: var(--green-light); }
+.contrib-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--bg-subtle); border-radius: 7px; }
+.contrib-item.new { background: var(--green-xpale); border: 0.5px solid var(--green-light); }
+.contrib-av { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; flex-shrink: 0; }
+.contrib-name { font-size: 11px; font-weight: 500; }
+.contrib-type { font-size: 10px; color: var(--text-secondary); overflow-wrap: anywhere; }
+.contrib-time { font-size: 10px; color: var(--text-tertiary); margin-left: auto; white-space: nowrap; }
+.contrib-form { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.contrib-form-row { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+.contrib-form-row select { flex: 0 0 auto; }
+.contrib-form-row input { min-width: 140px; }
+.contrib-files { display: flex; flex-wrap: wrap; gap: 5px; }
+.contrib-file { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 3px 9px; border-radius: 20px; background: var(--green-pale); color: var(--green-dark); border: 0.5px solid var(--green-light); }
+.contrib-note { font-size: 10px; color: var(--text-tertiary); }
+
 /* ─── FORUM ─── */
 .av-teal { background: #9FE1CB; color: #085041; }
 .av-blue { background: #B5D4F4; color: #0C447C; }
@@ -908,7 +925,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
   <div class="overlay-header">
     <div>
       <div class="overlay-title"><i class="ti ti-file-text"></i> Research</div>
-      <div class="overlay-subtitle">Databases, benchmarks, and tools for embodied carbon and material selection</div>
+      <div class="overlay-subtitle">Databases, benchmarks, and tools for embodied carbon and material selection — and share your own research</div>
     </div>
     <button class="overlay-close" onclick="closeOverlay('panel-research')">← Back to Analyse</button>
   </div>
@@ -947,6 +964,58 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
               <div class="r-meta"><span>WoodWorks Wood Products Council</span><span class="r-tag">Mass timber</span><span class="r-tag">Case studies</span><span class="r-tag">US projects</span></div>
               <a class="r-action" href="https://www.woodworks.org/" target="_blank" rel="noopener" style="text-decoration:none"><i class="ti ti-external-link"></i> Open resource</a>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><i class="ti ti-upload"></i> Share your research</div>
+        <label class="upload-zone-sm" id="contrib-zone" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="contribDrop(event)">
+          <input type="file" id="contrib-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.jpg,.jpeg,.png" style="display:none" onchange="contribAdd(this.files);this.value=''">
+          <i class="ti ti-upload" style="font-size:18px;color:var(--text-tertiary);display:block;margin-bottom:6px"></i>
+          <div style="font-size:12px;font-weight:500;margin-bottom:4px">Share your data</div>
+          <div style="font-size:10px;color:var(--text-secondary);line-height:1.6">Upload papers, case studies, EPDs, or built project records to the SROT knowledge base. Click or drop files here.</div>
+        </label>
+        <div class="contrib-form" id="contrib-form" style="display:none">
+          <div id="contrib-files" class="contrib-files"></div>
+          <div class="contrib-form-row">
+            <select id="contrib-type" class="mat-input" aria-label="Type of contribution">
+              <option>LCA</option><option>EPD</option><option>Case study</option><option>Built project</option><option>Vernacular</option><option>Innovation</option><option>Paper</option>
+            </select>
+            <input id="contrib-desc" class="mat-input" type="text" maxlength="120" placeholder="Short description (e.g. Rammed earth, Croatia)">
+          </div>
+          <div class="contrib-form-row">
+            <input id="contrib-name" class="mat-input" type="text" maxlength="40" placeholder="Your name">
+            <button class="btn-ghost" onclick="contribCancel()">Cancel</button>
+            <button class="btn-primary" onclick="contribSubmit()">Share</button>
+          </div>
+          <div class="contrib-note">Demo mode: files stay on your device and aren't uploaded anywhere yet.</div>
+        </div>
+        <div class="divider-label" style="margin-top:14px">
+          <div class="divider-line"></div>
+          <span>Recent contributions</span>
+          <div class="divider-line"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px" id="contrib-list">
+          <div class="contrib-item">
+            <div class="contrib-av av-teal">AR</div>
+            <div><div class="contrib-name">Aarav Rao</div><div class="contrib-type">LCA: Bamboo structural, India</div></div>
+            <div class="contrib-time">2h ago</div>
+          </div>
+          <div class="contrib-item">
+            <div class="contrib-av av-blue">SK</div>
+            <div><div class="contrib-name">Sara Kovač</div><div class="contrib-type">Built: Rammed earth, Croatia</div></div>
+            <div class="contrib-time">5h ago</div>
+          </div>
+          <div class="contrib-item">
+            <div class="contrib-av av-amber">JO</div>
+            <div><div class="contrib-name">James Osei</div><div class="contrib-type">Innovation: Mycelium pilot, Ghana</div></div>
+            <div class="contrib-time">1d ago</div>
+          </div>
+          <div class="contrib-item">
+            <div class="contrib-av av-purple">ML</div>
+            <div><div class="contrib-name">Meera Lal</div><div class="contrib-type">Vernacular: Rajasthani stone, India</div></div>
+            <div class="contrib-time">2d ago</div>
           </div>
         </div>
       </div>
@@ -1859,6 +1928,44 @@ const FALLBACK_CIRC_DB = [
 
 
 // open the view named in the URL hash (#site, #materials), else the front page
+// ─── RESEARCH: SHARE YOUR DATA (demo — files stay in the browser) ───
+let contribFiles = [];
+
+function contribDrop(e) {
+  e.preventDefault();
+  document.getElementById('contrib-zone').classList.remove('dragover');
+  contribAdd(e.dataTransfer.files);
+}
+
+function contribAdd(files) {
+  contribFiles = contribFiles.concat([...files]);
+  if (!contribFiles.length) return;
+  document.getElementById('contrib-files').innerHTML = contribFiles.map(f =>
+    `<span class="contrib-file"><i class="ti ti-file"></i> ${forumEsc(f.name)}</span>`).join('');
+  const name = document.getElementById('contrib-name');
+  if (!name.value) { try { name.value = localStorage.getItem('srot.forum.name') || ''; } catch (e) { /* ignore */ } }
+  document.getElementById('contrib-form').style.display = '';
+}
+
+function contribCancel() {
+  contribFiles = [];
+  document.getElementById('contrib-desc').value = '';
+  document.getElementById('contrib-form').style.display = 'none';
+}
+
+function contribSubmit() {
+  const desc = document.getElementById('contrib-desc').value.trim() || contribFiles.map(f => f.name).join(', ');
+  const name = document.getElementById('contrib-name').value.trim() || 'Guest';
+  const type = document.getElementById('contrib-type').value;
+  const item = document.createElement('div');
+  item.className = 'contrib-item new';
+  item.innerHTML = `<div class="contrib-av ${forumAvatarCls(name)}">${forumEsc(forumInitials(name))}</div>
+    <div><div class="contrib-name">${forumEsc(name)}</div><div class="contrib-type">${forumEsc(type)}: ${forumEsc(desc)}</div></div>
+    <div class="contrib-time">just now</div>`;
+  document.getElementById('contrib-list').prepend(item);
+  contribCancel();
+}
+
 function showViewFromHash() {
   const v = location.hash.slice(1);
   if (v === 'forum') { navClick(document.getElementById('nav-forum'), 'forum'); return; }
