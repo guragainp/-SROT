@@ -101,6 +101,9 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 .dim-unit span { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 10px; color: var(--text-tertiary); pointer-events: none; }
 .dim-unit .mat-input { padding-right: 30px; -moz-appearance: textfield; }
 .dim-unit .mat-input::-webkit-outer-spin-button, .dim-unit .mat-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.dim-mode { display: inline-flex; border: 0.5px solid var(--border); border-radius: 20px; padding: 2px; margin-bottom: 12px; background: var(--bg-card); }
+.dim-mode button { font-family: var(--sans); font-size: 10px; padding: 4px 11px; border: none; border-radius: 20px; background: transparent; color: var(--text-secondary); cursor: pointer; }
+.dim-mode button.on { background: var(--green-pale); color: var(--green-deep); font-weight: 500; }
 .dim-hint { font-size: 10px; color: var(--text-tertiary); margin-top: 5px; line-height: 1.5; }
 
 /* ─── MATERIAL ADDER ─── */
@@ -527,7 +530,11 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
     <!-- DIMENSIONS -->
     <div class="left-section">
       <div class="eyebrow"><i class="ti ti-ruler-measure"></i> Dimensions</div>
-      <div class="dim-grid">
+      <div class="dim-mode">
+        <button id="dim-mode-dims" class="on" onclick="setDimMode('dims')">L × B × H</button>
+        <button id="dim-mode-volume" onclick="setDimMode('volume')">Volume only</button>
+      </div>
+      <div class="dim-grid" id="dim-grid">
         <div class="dim-field">
           <label for="dim-length">Length</label>
           <div class="dim-unit"><input class="mat-input" id="dim-length" type="number" min="0" step="any" placeholder="0" oninput="updateVolume()"><span>m</span></div>
@@ -545,7 +552,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
         <label for="dim-volume">Volume of material</label>
         <div class="dim-unit"><input class="mat-input" id="dim-volume" type="number" min="0" step="any" placeholder="0" oninput="this.dataset.manual = this.value ? '1' : ''"><span>m³</span></div>
       </div>
-      <div class="dim-hint">Volume fills in from length × breadth × height — type your own to override it (e.g. net of openings). Analyse uses these to give total carbon for the component.</div>
+      <div class="dim-hint" id="dim-hint">Volume fills in from length × breadth × height — type your own to override it (e.g. net of openings). Analyse uses these to give total carbon for the component.</div>
     </div>
 
     <!-- MATERIAL SELECTOR -->
@@ -563,6 +570,10 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
           <button class="mat-chip-btn" data-comp="wall" onclick="toggleChip(this,'CMU Block')">CMU Block</button>
           <button class="mat-chip-btn" data-comp="wall" onclick="toggleChip(this,'Brick Veneer')">Brick Veneer</button>
           <button class="mat-chip-btn" data-comp="wall" onclick="toggleChip(this,'Gypsum Drywall')">Gypsum Drywall</button>
+          <button class="mat-chip-btn" data-comp="wall" onclick="toggleChip(this,'Rammed Earth')">Rammed Earth</button>
+          <!-- Shared: concrete -->
+          <button class="mat-chip-btn" data-comp="wall floor structure" onclick="toggleChip(this,'Concrete')">Concrete</button>
+          <button class="mat-chip-btn" data-comp="wall floor structure" onclick="toggleChip(this,'Cast-in-Place Concrete')">Cast-in-Place Concrete</button>
           <!-- Roof -->
           <button class="mat-chip-btn" data-comp="roof" onclick="toggleChip(this,'Asphalt Shingles')">Asphalt Shingles</button>
           <button class="mat-chip-btn" data-comp="roof" onclick="toggleChip(this,'TPO Membrane')">TPO Membrane</button>
@@ -575,7 +586,6 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
           <button class="mat-chip-btn" data-comp="floor" onclick="toggleChip(this,'Carpet')">Carpet</button>
           <!-- Structure -->
           <button class="mat-chip-btn" data-comp="structure" onclick="toggleChip(this,'Structural Steel')">Structural Steel</button>
-          <button class="mat-chip-btn" data-comp="structure" onclick="toggleChip(this,'Cast-in-Place Concrete')">Cast-in-Place Concrete</button>
           <button class="mat-chip-btn" data-comp="structure" onclick="toggleChip(this,'Glulam Timber')">Glulam Timber</button>
           <button class="mat-chip-btn" data-comp="structure" onclick="toggleChip(this,'Cold-Formed Steel')">Cold-Formed Steel</button>
           <!-- Facade -->
@@ -945,19 +955,22 @@ const MATERIAL_DATA = {
   'CMU Block':               { carbon: 130, unit: 'kgCO₂e/m²', durability: 92, local: 80, reuse: 35,  lifecycle: 'med',  color: '#EF9F27', dot: '#9A9A96' },
   'Brick Veneer':            { carbon: 95,  unit: 'kgCO₂e/m²', durability: 90, local: 75, reuse: 70,  lifecycle: 'high', color: '#EF9F27', dot: '#BA7517' },
   'Gypsum Drywall':          { carbon: 40,  unit: 'kgCO₂e/m²', durability: 55, local: 90, reuse: 20,  lifecycle: 'low',  color: '#D85A30', dot: '#9A9A96' },
+  'Rammed Earth':            { carbon: 25,  perM3: 70,  unit: 'kgCO₂e/m²', durability: 85, local: 90, reuse: 80,  lifecycle: 'high', color: '#639922', dot: '#854F0B' },
+  // SHARED (wall / floor / structure)
+  'Concrete':                { carbon: 200, perM3: 300, unit: 'kgCO₂e/m²', durability: 88, local: 85, reuse: 20,  lifecycle: 'low',  color: '#D85A30', dot: '#9A9A96' },
   // ROOF
   'Asphalt Shingles':        { carbon: 160, unit: 'kgCO₂e/m²', durability: 60, local: 70, reuse: 10,  lifecycle: 'low',  color: '#D85A30', dot: '#444441' },
   'TPO Membrane':            { carbon: 110, unit: 'kgCO₂e/m²', durability: 72, local: 65, reuse: 15,  lifecycle: 'med',  color: '#EF9F27', dot: '#185FA5' },
   'Metal Roofing':           { carbon: 75,  unit: 'kgCO₂e/m²', durability: 88, local: 60, reuse: 80,  lifecycle: 'high', color: '#3B6D11', dot: '#444441' },
   'Fiberglass Insulation':   { carbon: 20,  unit: 'kgCO₂e/m²', durability: 50, local: 75, reuse: 10,  lifecycle: 'low',  color: '#D85A30', dot: '#9A9A96' },
   // FLOOR
-  'Concrete Slab':           { carbon: 210, unit: 'kgCO₂e/m²', durability: 88, local: 75, reuse: 20,  lifecycle: 'low',  color: '#D85A30', dot: '#9A9A96' },
+  'Concrete Slab':           { carbon: 210, perM3: 350, unit: 'kgCO₂e/m²', durability: 88, local: 75, reuse: 20,  lifecycle: 'low',  color: '#D85A30', dot: '#9A9A96' },
   'Engineered Wood':         { carbon: 30,  unit: 'kgCO₂e/m²', durability: 72, local: 70, reuse: 65,  lifecycle: 'high', color: '#639922', dot: '#639922' },
   'Ceramic Tile':            { carbon: 55,  unit: 'kgCO₂e/m²', durability: 90, local: 50, reuse: 55,  lifecycle: 'high', color: '#3B6D11', dot: '#185FA5' },
   'Carpet':                  { carbon: 45,  unit: 'kgCO₂e/m²', durability: 30, local: 60, reuse: 10,  lifecycle: 'low',  color: '#D85A30', dot: '#9A9A96' },
   // STRUCTURE
   'Structural Steel':        { carbon: 280, unit: 'kgCO₂e/m²', durability: 95, local: 55, reuse: 85,  lifecycle: 'med',  color: '#D85A30', dot: '#444441' },
-  'Cast-in-Place Concrete':  { carbon: 240, unit: 'kgCO₂e/m²', durability: 90, local: 80, reuse: 15,  lifecycle: 'low',  color: '#D85A30', dot: '#9A9A96' },
+  'Cast-in-Place Concrete':  { carbon: 240, perM3: 400, unit: 'kgCO₂e/m²', durability: 90, local: 80, reuse: 15,  lifecycle: 'low',  color: '#D85A30', dot: '#9A9A96' },
   'Glulam Timber':           { carbon: 40,  unit: 'kgCO₂e/m²', durability: 78, local: 72, reuse: 75,  lifecycle: 'high', color: '#639922', dot: '#639922' },
   'Cold-Formed Steel':       { carbon: 200, unit: 'kgCO₂e/m²', durability: 85, local: 60, reuse: 80,  lifecycle: 'med',  color: '#EF9F27', dot: '#444441' },
   // FACADE
@@ -1055,6 +1068,15 @@ const ALT_DATA = {
     { name:'Lime Render / Plaster', saving:'−38%', why:'Hydraulic lime plasters are breathable, repairable, and use significantly less energy to produce than Portland cement stucco. Lime Depot and St. Astier supply nationally; US interest growing with Passive House.', region:'National · US', dot:'#1D9E75', reuse:80, recycle:85, recover:90 },
     { name:'Fiber Cement Panel Cladding', saving:'−22%', why:'Prefabricated fiber cement rainscreen panels (Nichiha, Equitone) are durable, low-maintenance, and have lower lifecycle carbon than EIFS. Code-compliant and available nationally.', region:'National · US', dot:'#9A9A96', reuse:20, recycle:35, recover:25 },
   ],
+  'Concrete': [
+    { name:'Low-Carbon Concrete (SCMs)', saving:'−42%', why:'Blended cements with 40–50% supplementary cementitious materials (fly ash, GGBS) cut Portland cement — the main source of concrete carbon. ASTM C595 Type IL Portland-Limestone Cement is now widely available from US ready-mix plants.', region:'National · US', dot:'#639922', reuse:20, recycle:55, recover:40 },
+    { name:'Recycled Aggregate Concrete', saving:'−20%', why:'Recycled concrete aggregate (RCA) from demolished structures replaces virgin aggregate. Widely available in US urban markets; ASTM C33-compliant mixes are standard.', region:'National · Urban US', dot:'#9A9A96', reuse:20, recycle:70, recover:40 },
+    { name:'Rammed Earth (stabilized)', saving:'−75%', why:'For walls, stabilized rammed earth uses a small fraction of the cement of a concrete wall and gives exceptional thermal mass. Strong precedent in Arizona, New Mexico and California.', region:'Southwest US · California', dot:'#854F0B', reuse:85, recycle:90, recover:99 },
+  ],
+  'Rammed Earth': [
+    { name:'Unstabilized Rammed Earth', saving:'−60%', why:'Leaving out the cement stabilizer removes most of rammed earth\'s remaining carbon and keeps the wall fully recyclable back to soil. Needs good roof overhangs and a raised plinth to manage moisture.', region:'Arid climates · Southwest US', dot:'#854F0B', reuse:90, recycle:95, recover:99 },
+    { name:'Compressed Earth Block (CEB)', saving:'−25%', why:'Machine-pressed earth blocks use similar soils with less on-site formwork and labour, and lay like masonry. Producers and press hire are available across the Southwest and Texas.', region:'Southwest US · Texas', dot:'#BA7517', reuse:80, recycle:90, recover:95 },
+  ],
   'default': [
     { name:'Recycled-Content Steel (EAF)', saving:'−72%', why:'Over 70% of US steel is already produced in electric arc furnaces using scrap. Specify 90%+ recycled content — available nationally from Nucor, SDI, and CMC. The single biggest structural carbon lever in US construction.', region:'National · US', dot:'#444441', reuse:85, recycle:98, recover:20 },
     { name:'Mass Timber (CLT / Glulam)', saving:'−78%', why:'Cross-laminated and glulam timber systems store carbon for the building\'s lifetime. Now code-approved to 18 stories in the US. PNW and Southeast mills supply the entire country.', region:'Pacific Northwest · Southeast US', dot:'#639922', reuse:70, recycle:75, recover:90 },
@@ -1124,7 +1146,7 @@ function selectComp(comp) {
   // Filter chips to show only materials for this component
   document.querySelectorAll('.mat-chip-btn').forEach(btn => {
     const btnComp = btn.getAttribute('data-comp');
-    btn.style.display = (!btnComp || btnComp === comp) ? '' : 'none';
+    btn.style.display = (!btnComp || btnComp.split(' ').includes(comp)) ? '' : 'none';
   });
 }
 
@@ -1203,22 +1225,52 @@ function renderAddedMats() {
 
 // ─── RUN ANALYSIS ───
 // ─── QUANTITIES ───
-// Carbon factors are per m² of component. Walls and facades are measured on
-// their face (breadth = thickness); roofs, floors and structure on plan
+// Most carbon factors are per m² of component. Walls and facades are measured
+// on their face (breadth = thickness); roofs, floors and structure on plan
 // (height = thickness). Area = volume ÷ thickness, so a typed volume override
-// (e.g. net of openings) carries through.
+// (e.g. net of openings) carries through. Poured / rammed materials (concrete,
+// rammed earth) also carry an indicative per-m³ factor, so a volume alone is
+// enough for them.
 let analysisQty = null;
+let dimMode = 'dims';
+
+function setDimMode(mode) {
+  dimMode = mode;
+  document.getElementById('dim-mode-dims').classList.toggle('on', mode === 'dims');
+  document.getElementById('dim-mode-volume').classList.toggle('on', mode === 'volume');
+  document.getElementById('dim-grid').style.display = mode === 'dims' ? '' : 'none';
+  document.getElementById('dim-hint').textContent = mode === 'dims'
+    ? 'Volume fills in from length × breadth × height — type your own to override it (e.g. net of openings). Analyse uses these to give total carbon for the component.'
+    : 'Enter just the volume for poured or rammed materials like concrete and rammed earth. Other materials need L × B × H for a total.';
+  // Back on L × B × H, the dimensions drive the volume again
+  if (mode === 'dims') {
+    document.getElementById('dim-volume').dataset.manual = '';
+    const filled = ['dim-length','dim-breadth','dim-height'].every(id => parseFloat(document.getElementById(id).value) > 0);
+    if (filled) updateVolume();
+  }
+}
 
 function readQuantities() {
   const num = id => { const v = parseFloat(document.getElementById(id).value); return v > 0 ? v : null; };
-  const l = num('dim-length'), b = num('dim-breadth'), h = num('dim-height'), vol = num('dim-volume');
+  const vol = num('dim-volume');
+  if (dimMode === 'volume') return vol ? { area: null, volume: vol } : null;
+  const l = num('dim-length'), b = num('dim-breadth'), h = num('dim-height');
   const vertical = activeComp === 'wall' || activeComp === 'facade';
   const thickness = vertical ? b : h;
   let area = null;
   if (vol && thickness) area = vol / thickness;
   else if (vertical && l && h) area = l * h;
   else if (!vertical && l && b) area = l * b;
-  return area ? { area, volume: vol } : null;
+  return (area || vol) ? { area, volume: vol } : null;
+}
+
+// Total kgCO₂e for a material and what it was measured on, or null if the
+// quantities entered don't cover it. Volume wins for materials with a per-m³ factor.
+function materialTotal(d) {
+  if (!analysisQty || !d) return null;
+  if (d.perM3 && analysisQty.volume) return { kg: d.perM3 * analysisQty.volume, basis: fmtNum(analysisQty.volume) + ' m³' };
+  if (analysisQty.area) return { kg: d.carbon * analysisQty.area, basis: fmtNum(analysisQty.area) + ' m²' };
+  return null;
 }
 
 function fmtCarbon(kg) {
@@ -1228,19 +1280,17 @@ function fmtCarbon(kg) {
 
 function fmtNum(n) { return n.toLocaleString(undefined, { maximumFractionDigits: 2 }); }
 
-function carbonLabel(perM2) {
-  return analysisQty ? fmtCarbon(perM2 * analysisQty.area) : perM2 + ' kgCO₂e/m²';
+function carbonLabel(d) {
+  const t = materialTotal(d);
+  return t ? fmtCarbon(t.kg) : d.carbon + ' kgCO₂e/m²';
 }
 
 function runAnalysis() {
   if (userMaterials.length === 0) return;
   analysisQty = readQuantities();
   const qtyText = analysisQty
-    ? ' · ' + fmtNum(analysisQty.area) + ' m²' + (analysisQty.volume ? ' / ' + fmtNum(analysisQty.volume) + ' m³' : '')
+    ? ' · ' + [analysisQty.area && fmtNum(analysisQty.area) + ' m²', analysisQty.volume && fmtNum(analysisQty.volume) + ' m³'].filter(Boolean).join(' / ')
     : '';
-  document.getElementById('carbon-heading').textContent = analysisQty
-    ? 'Carbon comparison (total for ' + fmtNum(analysisQty.area) + ' m²)'
-    : 'Carbon comparison (kgCO₂e/m²)';
   document.getElementById('empty-state').style.display = 'none';
   document.getElementById('screen-analysis').style.display = 'block';
   document.getElementById('screen-insights').style.display = 'block';
@@ -1268,11 +1318,14 @@ function renderUserMaterials() {
     const lcClass = d.lifecycle === 'high' ? 'lc-good' : d.lifecycle === 'med' ? 'lc-med' : 'lc-low';
     const lcText = d.lifecycle === 'high' ? 'Good lifecycle' : d.lifecycle === 'med' ? 'Moderate' : 'Limited';
     const carbonPct = Math.min(100, Math.round(d.carbon / 3));
+    const total = materialTotal(d);
     return `<div class="user-mat-item">
       <div class="user-mat-name"><div class="mat-dot" style="background:${colors[i%colors.length]}"></div>${m}</div>
       <div class="mat-metrics">
         <div class="mat-metric"><span class="mat-metric-label">Embodied carbon</span><span class="mat-metric-val" style="color:${d.color}">${d.carbon} kgCO₂e/m²</span></div>
-        ${analysisQty ? `<div class="mat-metric"><span class="mat-metric-label">Total for ${fmtNum(analysisQty.area)} m²</span><span class="mat-metric-val" style="color:${d.color}">${fmtCarbon(d.carbon * analysisQty.area)}</span></div>` : ''}
+        ${d.perM3 ? `<div class="mat-metric"><span class="mat-metric-label">Per volume</span><span class="mat-metric-val" style="color:${d.color}">${d.perM3} kgCO₂e/m³</span></div>` : ''}
+        ${total ? `<div class="mat-metric"><span class="mat-metric-label">Total for ${total.basis}</span><span class="mat-metric-val" style="color:${d.color}">${fmtCarbon(total.kg)}</span></div>`
+          : analysisQty ? `<div class="mat-metric"><span class="mat-metric-label">Total</span><span class="mat-metric-val" style="color:var(--text-tertiary)">Add L × B × H</span></div>` : ''}
         <div class="metric-bar"><div class="metric-bar-fill" style="width:${carbonPct}%;background:${d.color}"></div></div>
         <div class="mat-metric" style="margin-top:5px"><span class="mat-metric-label">Durability</span><span class="mat-metric-val">${d.durability}/100</span></div>
         <div class="metric-bar"><div class="metric-bar-fill mf-blue" style="width:${d.durability}%"></div></div>
@@ -1321,8 +1374,9 @@ function selectAlt2(i) {
   document.getElementById('saving-num2').textContent = savedPct;
   const fromD = MATERIAL_DATA[a.from];
   const pctNum = Math.abs(parseFloat(a.saving.replace('−', '-'))) / 100;
-  const savedTotal = analysisQty && fromD && pctNum
-    ? `<br>≈ <strong>${fmtCarbon(fromD.carbon * analysisQty.area * pctNum)}</strong> saved vs ${a.from} over ${fmtNum(analysisQty.area)} m²` : '';
+  const fromTotal = materialTotal(fromD);
+  const savedTotal = fromTotal && pctNum
+    ? `<br>≈ <strong>${fmtCarbon(fromTotal.kg * pctNum)}</strong> saved vs ${a.from} over ${fromTotal.basis}` : '';
   document.getElementById('saving-desc2').innerHTML = `carbon saving with <strong>${a.name}</strong>${savedTotal}<br><span style="font-size:9px;color:var(--text-tertiary)">Region: ${a.region}</span>`;
   document.getElementById('circ-mini').style.display = 'block';
   document.getElementById('circ-mini-grid').innerHTML = `
@@ -1347,18 +1401,20 @@ function selectAlt2(i) {
 
 // ─── RENDER CARBON BARS ───
 function renderCarbonBars(highlighted) {
-  const maxC = Math.max(...userMaterials.map(m => (MATERIAL_DATA[m] || {carbon:200}).carbon), 250);
-  const bars = userMaterials.map(m => {
-    const d = MATERIAL_DATA[m] || { carbon: 150 };
-    const pct = Math.round((d.carbon / maxC) * 100);
-    const cls = d.carbon > 180 ? 'bf-red' : d.carbon > 80 ? 'bf-amber' : 'bf-green';
-    return { label: m, val: carbonLabel(d.carbon), pct, cls, col: d.color || '#9A9A96', isAlt: false };
+  const items = userMaterials.map(m => ({ label: m, d: MATERIAL_DATA[m] || { carbon: 150 }, isAlt: false }));
+  if (highlighted && MATERIAL_DATA[highlighted]) items.push({ label: highlighted + ' (alt)', d: MATERIAL_DATA[highlighted], isAlt: true });
+  items.forEach(it => it.total = materialTotal(it.d));
+  // Compare totals when every bar has one; otherwise compare per-m² factors
+  const useTotals = items.every(it => it.total);
+  const size = it => useTotals ? it.total.kg : it.d.carbon;
+  const maxV = Math.max(...items.map(size), useTotals ? 0 : 250);
+  document.getElementById('carbon-heading').textContent = useTotals ? 'Carbon comparison (total)'
+    : items.some(it => it.total) ? 'Carbon comparison' : 'Carbon comparison (kgCO₂e/m²)';
+  const bars = items.map(it => {
+    const cls = it.isAlt ? 'bf-teal' : it.d.carbon > 180 ? 'bf-red' : it.d.carbon > 80 ? 'bf-amber' : 'bf-green';
+    const col = it.isAlt ? '#1D9E75' : it.d.color || '#9A9A96';
+    return { label: it.label, val: carbonLabel(it.d), pct: Math.round((size(it) / maxV) * 100), cls, col, isAlt: it.isAlt };
   });
-  if (highlighted && MATERIAL_DATA[highlighted]) {
-    const d = MATERIAL_DATA[highlighted];
-    const pct = Math.round((d.carbon / maxC) * 100);
-    bars.push({ label: highlighted + ' (alt)', val: carbonLabel(d.carbon), pct, cls: 'bf-teal', col: '#1D9E75', isAlt: true });
-  }
   document.getElementById('carbon-bars2').innerHTML = bars.map(b =>
     `<div class="carbon-row2">
       <div class="carbon-meta2">
@@ -1384,7 +1440,7 @@ function renderInsights() {
     const impact = d.carbon > 200 ? 'Very high' : d.carbon > 100 ? 'High' : d.carbon > 50 ? 'Moderate' : 'Low';
     return `<tr>
       <td class="ct-mat">${m}</td>
-      <td class="ct-val" style="color:${d.color};font-weight:500">${carbonLabel(d.carbon)}</td>
+      <td class="ct-val" style="color:${d.color};font-weight:500">${carbonLabel(d)}</td>
       <td class="ct-val">${impact}</td>
       <td class="ct-bar-wrap"><div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div></td>
       <td><span class="lifecycle-chip ${lcClass}">${lcText}</span></td>
@@ -1425,6 +1481,7 @@ function resetAll() {
   uploadDone = false;
   activeComp = 'wall';
   analysisQty = null;
+  setDimMode('dims');
   document.getElementById('screen-analysis').style.display = 'none';
   document.getElementById('screen-insights').style.display = 'none';
   document.getElementById('empty-state').style.display = 'flex';
