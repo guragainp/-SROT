@@ -545,7 +545,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
         <label for="dim-volume">Volume of material</label>
         <div class="dim-unit"><input class="mat-input" id="dim-volume" type="number" min="0" step="any" placeholder="0" oninput="this.dataset.manual = this.value ? '1' : ''"><span>m³</span></div>
       </div>
-      <div class="dim-hint">Volume fills in from length × breadth × height. Type your own value to override it.</div>
+      <div class="dim-hint">Volume fills in from length × breadth × height — type your own to override it (e.g. net of openings). Analyse uses these to give total carbon for the component.</div>
     </div>
 
     <!-- MATERIAL SELECTOR -->
@@ -646,7 +646,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
             <div class="col-title">Sustainability profile</div>
             <div style="font-size:10px;color:var(--text-secondary);margin-top:2px">Carbon footprint & circular economy</div>
           </div>
-          <div class="eyebrow" style="margin-bottom:8px"><i class="ti ti-chart-bar"></i> Carbon comparison (kgCO₂e/m²)</div>
+          <div class="eyebrow" style="margin-bottom:8px"><i class="ti ti-chart-bar"></i> <span id="carbon-heading">Carbon comparison (kgCO₂e/m²)</span></div>
           <div id="carbon-bars2"></div>
           <div class="saving-row">
             <div class="saving-num" id="saving-num2">—</div>
@@ -1202,15 +1202,56 @@ function renderAddedMats() {
 }
 
 // ─── RUN ANALYSIS ───
+// ─── QUANTITIES ───
+// Carbon factors are per m² of component. Walls and facades are measured on
+// their face (breadth = thickness); roofs, floors and structure on plan
+// (height = thickness). Area = volume ÷ thickness, so a typed volume override
+// (e.g. net of openings) carries through.
+let analysisQty = null;
+
+function readQuantities() {
+  const num = id => { const v = parseFloat(document.getElementById(id).value); return v > 0 ? v : null; };
+  const l = num('dim-length'), b = num('dim-breadth'), h = num('dim-height'), vol = num('dim-volume');
+  const vertical = activeComp === 'wall' || activeComp === 'facade';
+  const thickness = vertical ? b : h;
+  let area = null;
+  if (vol && thickness) area = vol / thickness;
+  else if (vertical && l && h) area = l * h;
+  else if (!vertical && l && b) area = l * b;
+  return area ? { area, volume: vol } : null;
+}
+
+function fmtCarbon(kg) {
+  return kg >= 1000 ? (kg / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 }) + ' tCO₂e'
+                    : Math.round(kg).toLocaleString() + ' kgCO₂e';
+}
+
+function fmtNum(n) { return n.toLocaleString(undefined, { maximumFractionDigits: 2 }); }
+
+function carbonLabel(perM2) {
+  return analysisQty ? fmtCarbon(perM2 * analysisQty.area) : perM2 + ' kgCO₂e/m²';
+}
+
 function runAnalysis() {
   if (userMaterials.length === 0) return;
+  analysisQty = readQuantities();
+  const qtyText = analysisQty
+    ? ' · ' + fmtNum(analysisQty.area) + ' m²' + (analysisQty.volume ? ' / ' + fmtNum(analysisQty.volume) + ' m³' : '')
+    : '';
+  document.getElementById('carbon-heading').textContent = analysisQty
+    ? 'Carbon comparison (total for ' + fmtNum(analysisQty.area) + ' m²)'
+    : 'Carbon comparison (kgCO₂e/m²)';
   document.getElementById('empty-state').style.display = 'none';
   document.getElementById('screen-analysis').style.display = 'block';
   document.getElementById('screen-insights').style.display = 'block';
   document.getElementById('export-btn').style.display = '';
   document.getElementById('active-bar').classList.add('show');
   document.getElementById('active-bar-text').textContent =
-    'Analysing: ' + activeComp.charAt(0).toUpperCase() + activeComp.slice(1) + ' · ' + userMaterials.join(', ') + ' — tap an alternative to explore circularity';
+    'Analysing: ' + activeComp.charAt(0).toUpperCase() + activeComp.slice(1) + qtyText + ' · ' + userMaterials.join(', ') + ' — tap an alternative to explore circularity';
+  activeAlt = null;
+  document.getElementById('saving-num2').textContent = '—';
+  document.getElementById('saving-desc2').textContent = 'Select an alternative to see potential carbon saving';
+  document.getElementById('circ-mini').style.display = 'none';
   renderUserMaterials();
   renderAlternatives();
   renderCarbonBars();
@@ -1231,6 +1272,7 @@ function renderUserMaterials() {
       <div class="user-mat-name"><div class="mat-dot" style="background:${colors[i%colors.length]}"></div>${m}</div>
       <div class="mat-metrics">
         <div class="mat-metric"><span class="mat-metric-label">Embodied carbon</span><span class="mat-metric-val" style="color:${d.color}">${d.carbon} kgCO₂e/m²</span></div>
+        ${analysisQty ? `<div class="mat-metric"><span class="mat-metric-label">Total for ${fmtNum(analysisQty.area)} m²</span><span class="mat-metric-val" style="color:${d.color}">${fmtCarbon(d.carbon * analysisQty.area)}</span></div>` : ''}
         <div class="metric-bar"><div class="metric-bar-fill" style="width:${carbonPct}%;background:${d.color}"></div></div>
         <div class="mat-metric" style="margin-top:5px"><span class="mat-metric-label">Durability</span><span class="mat-metric-val">${d.durability}/100</span></div>
         <div class="metric-bar"><div class="metric-bar-fill mf-blue" style="width:${d.durability}%"></div></div>
@@ -1250,7 +1292,7 @@ function renderAlternatives() {
   let alts = [];
   userMaterials.forEach(m => {
     const a = ALT_DATA[m] || ALT_DATA['default'];
-    a.forEach(alt => { if (!alts.find(x => x.name === alt.name)) alts.push(alt); });
+    a.forEach(alt => { if (!alts.find(x => x.name === alt.name)) alts.push({ ...alt, from: m }); });
   });
   if (alts.length === 0) alts = ALT_DATA['default'];
   alts = alts.slice(0, 5);
@@ -1277,7 +1319,11 @@ function selectAlt2(i) {
   renderCarbonBars(a.name);
   const savedPct = a.saving;
   document.getElementById('saving-num2').textContent = savedPct;
-  document.getElementById('saving-desc2').innerHTML = `carbon saving with <strong>${a.name}</strong><br><span style="font-size:9px;color:var(--text-tertiary)">Region: ${a.region}</span>`;
+  const fromD = MATERIAL_DATA[a.from];
+  const pctNum = Math.abs(parseFloat(a.saving.replace('−', '-'))) / 100;
+  const savedTotal = analysisQty && fromD && pctNum
+    ? `<br>≈ <strong>${fmtCarbon(fromD.carbon * analysisQty.area * pctNum)}</strong> saved vs ${a.from} over ${fmtNum(analysisQty.area)} m²` : '';
+  document.getElementById('saving-desc2').innerHTML = `carbon saving with <strong>${a.name}</strong>${savedTotal}<br><span style="font-size:9px;color:var(--text-tertiary)">Region: ${a.region}</span>`;
   document.getElementById('circ-mini').style.display = 'block';
   document.getElementById('circ-mini-grid').innerHTML = `
     <div class="circ-mini-row">
@@ -1306,12 +1352,12 @@ function renderCarbonBars(highlighted) {
     const d = MATERIAL_DATA[m] || { carbon: 150 };
     const pct = Math.round((d.carbon / maxC) * 100);
     const cls = d.carbon > 180 ? 'bf-red' : d.carbon > 80 ? 'bf-amber' : 'bf-green';
-    return { label: m, val: d.carbon + ' kgCO₂e/m²', pct, cls, col: d.color || '#9A9A96', isAlt: false };
+    return { label: m, val: carbonLabel(d.carbon), pct, cls, col: d.color || '#9A9A96', isAlt: false };
   });
   if (highlighted && MATERIAL_DATA[highlighted]) {
     const d = MATERIAL_DATA[highlighted];
     const pct = Math.round((d.carbon / maxC) * 100);
-    bars.push({ label: highlighted + ' (alt)', val: d.carbon + ' kgCO₂e/m²', pct, cls: 'bf-teal', col: '#1D9E75', isAlt: true });
+    bars.push({ label: highlighted + ' (alt)', val: carbonLabel(d.carbon), pct, cls: 'bf-teal', col: '#1D9E75', isAlt: true });
   }
   document.getElementById('carbon-bars2').innerHTML = bars.map(b =>
     `<div class="carbon-row2">
@@ -1338,7 +1384,7 @@ function renderInsights() {
     const impact = d.carbon > 200 ? 'Very high' : d.carbon > 100 ? 'High' : d.carbon > 50 ? 'Moderate' : 'Low';
     return `<tr>
       <td class="ct-mat">${m}</td>
-      <td class="ct-val" style="color:${d.color};font-weight:500">${d.carbon} kgCO₂e/m²</td>
+      <td class="ct-val" style="color:${d.color};font-weight:500">${carbonLabel(d.carbon)}</td>
       <td class="ct-val">${impact}</td>
       <td class="ct-bar-wrap"><div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div></td>
       <td><span class="lifecycle-chip ${lcClass}">${lcText}</span></td>
@@ -1378,6 +1424,7 @@ function resetAll() {
   activeAlt = null;
   uploadDone = false;
   activeComp = 'wall';
+  analysisQty = null;
   document.getElementById('screen-analysis').style.display = 'none';
   document.getElementById('screen-insights').style.display = 'none';
   document.getElementById('empty-state').style.display = 'flex';
