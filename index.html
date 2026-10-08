@@ -249,18 +249,6 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 .r-tag { display: inline-block; font-size: 8px; padding: 1px 5px; border-radius: 3px; background: var(--bg-subtle); color: var(--text-secondary); }
 .r-action { display: flex; align-items: center; gap: 3px; font-size: 9px; color: var(--blue); margin-top: 2px; }
 
-/* community */
-.contrib-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 12px; }
-.contrib-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--bg-subtle); border-radius: 7px; }
-.contrib-av { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; flex-shrink: 0; }
-.av-teal { background: #9FE1CB; color: #085041; }
-.av-blue { background: #B5D4F4; color: #0C447C; }
-.av-amber { background: #FAC775; color: #633806; }
-.av-purple { background: #CECBF6; color: #26215C; }
-.contrib-name { font-size: 11px; font-weight: 500; }
-.contrib-type { font-size: 10px; color: var(--text-secondary); }
-.contrib-time { font-size: 10px; color: var(--text-tertiary); margin-left: auto; }
-
 /* ─── EMPTY STATE ─── */
 .empty-state { text-align: center; padding: 40px 24px; }
 .empty-state i { font-size: 36px; color: var(--text-tertiary); display: block; margin-bottom: 12px; }
@@ -272,9 +260,96 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 .divider-label span { font-size: 10px; color: var(--text-tertiary); white-space: nowrap; }
 .divider-line { flex: 1; height: 0.5px; background: var(--border); }
 
-/* community upload zone inside right col */
-.upload-zone-sm { border: 1px dashed var(--border-mid); border-radius: 10px; padding: 18px 14px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--bg-card); }
-.upload-zone-sm:hover { background: var(--green-xpale); border-color: var(--green-light); }
+/* ─── FORUM ─── */
+.av-teal { background: #9FE1CB; color: #085041; }
+.av-blue { background: #B5D4F4; color: #0C447C; }
+.av-amber { background: #FAC775; color: #633806; }
+.av-purple { background: #CECBF6; color: #26215C; }
+.forum-live { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--green-deep); }
+.forum-live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-mid); animation: forum-pulse 2s infinite; }
+@keyframes forum-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.forum-demo { display: flex; gap: 8px; align-items: flex-start; font-size: 11px; color: var(--text-secondary); background: var(--bg-subtle); border: 0.5px solid var(--border); border-radius: 8px; padding: 9px 12px; margin-bottom: 16px; line-height: 1.5; }
+.forum-demo i { font-size: 14px; color: var(--text-tertiary); margin-top: 1px; }
+.forum-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 20px; align-items: start; }
+.forum-composer { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 12px; }
+.forum-composer-row { display: flex; gap: 9px; align-items: center; }
+.forum-composer-more { display: none; margin-top: 10px; }
+.forum-composer.open .forum-composer-more { display: block; }
+.forum-composer-bar { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+.forum-textarea { width: 100%; box-sizing: border-box; resize: vertical; line-height: 1.5; display: block; }
+.forum-select { flex: 0 0 auto; padding: 6px 9px; font-size: 11px; }
+.forum-sort { display: flex; gap: 4px; margin-bottom: 12px; }
+.forum-sort button { font-family: var(--sans); font-size: 11px; padding: 5px 12px; border-radius: 20px; border: 0.5px solid transparent; background: transparent; color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+.forum-sort button:hover { background: var(--bg-subtle); }
+.forum-sort button.on { background: var(--green-pale); color: var(--green-deep); border-color: var(--green-light); font-weight: 500; }
+.forum-card { display: flex; gap: 10px; background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 10px; padding: 10px 12px 8px 6px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.15s; }
+.forum-card:hover { border-color: var(--border-mid); }
+.forum-card.open { cursor: default; }
+.forum-card.open:hover { border-color: var(--border); }
+.forum-card-body { flex: 1; min-width: 0; }
+.forum-vote { display: flex; align-items: center; gap: 1px; }
+.forum-vote.post { flex-direction: column; width: 34px; flex-shrink: 0; }
+.forum-vote span { font-size: 12px; font-weight: 500; color: var(--text-primary); min-width: 16px; text-align: center; }
+.forum-vote span.up { color: var(--green-deep); }
+.forum-vote span.down { color: var(--red); }
+.forum-vote button { background: none; border: none; cursor: pointer; color: var(--text-tertiary); padding: 2px; border-radius: 4px; display: flex; font-size: 17px; }
+.forum-vote button:hover { background: var(--bg-subtle); }
+.forum-vote button.up.on, .forum-vote button.up:hover { color: var(--green-deep); }
+.forum-vote button.down.on, .forum-vote button.down:hover { color: var(--red); }
+.forum-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; font-size: 10px; color: var(--text-tertiary); margin-bottom: 4px; }
+.forum-av { width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; flex-shrink: 0; }
+.forum-composer-row .forum-av { width: 30px; height: 30px; font-size: 14px; }
+.forum-author { font-weight: 500; color: var(--text-secondary); }
+.forum-op { font-size: 8px; font-weight: 600; padding: 1px 5px; border-radius: 3px; background: var(--green-pale); color: var(--green-deep); }
+.forum-sample { font-size: 8px; padding: 1px 6px; border-radius: 20px; border: 0.5px solid var(--border-mid); color: var(--text-tertiary); }
+.forum-flair { font-family: var(--sans); font-size: 9px; font-weight: 500; padding: 2px 8px; border-radius: 20px; border: 0.5px solid transparent; }
+.ff-green { background: var(--green-pale); color: var(--green-deep); }
+.ff-teal { background: #E1F5EE; color: #085041; }
+.ff-amber { background: var(--amber-pale); color: #854F0B; }
+.ff-blue { background: #E6F0FB; color: #0C447C; }
+.ff-brown { background: #F5EBDD; color: #633806; }
+.ff-purple { background: #EEEDFB; color: #26215C; }
+.ff-gray { background: var(--bg-subtle); color: var(--text-secondary); }
+.forum-title { font-size: 14px; font-weight: 500; color: var(--text-primary); line-height: 1.35; margin-bottom: 3px; }
+.forum-title.big { font-family: var(--serif); font-size: 18px; font-weight: 700; margin: 2px 0 8px; }
+.forum-preview { font-size: 12px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.forum-text { font-size: 13px; color: var(--text-primary); line-height: 1.6; overflow-wrap: anywhere; }
+.forum-text p { margin: 0 0 8px; }
+.forum-deleted { color: var(--text-tertiary); font-style: italic; }
+.forum-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+.forum-actions > span { display: inline-flex; align-items: center; gap: 4px; padding: 4px 6px; }
+.forum-actions > button, .forum-back, .forum-link { font-family: var(--sans); font-size: 11px; background: none; border: none; cursor: pointer; color: var(--text-tertiary); padding: 4px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; }
+.forum-actions > button:hover, .forum-back:hover, .forum-link:hover { background: var(--bg-subtle); color: var(--text-primary); }
+.forum-back { margin-bottom: 10px; padding-left: 0; }
+.forum-attach { background: var(--green-xpale); border: 0.5px solid var(--green-light); border-radius: 8px; padding: 9px 12px; margin: 6px 0 8px; }
+.forum-attach-title { font-size: 11px; font-weight: 500; color: var(--green-dark); display: flex; align-items: center; gap: 5px; margin-bottom: 4px; }
+.forum-attach-line { font-size: 11px; color: var(--text-secondary); line-height: 1.6; }
+.forum-attach-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; color: var(--green-deep); background: var(--green-xpale); border: 0.5px solid var(--green-light); border-radius: 20px; padding: 2px 9px; margin: 2px 0 4px; }
+.forum-comment-box { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+.forum-comment-as { font-size: 11px; color: var(--text-secondary); margin-bottom: 6px; }
+.forum-row-end { display: flex; justify-content: flex-end; gap: 7px; margin-top: 8px; }
+.forum-thread { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px 12px 4px; }
+.forum-empty-comments { font-size: 12px; color: var(--text-tertiary); padding: 8px 0 12px; }
+.forum-comment { display: flex; gap: 8px; margin-bottom: 6px; }
+.forum-comment .forum-comment { margin-top: 6px; }
+.forum-comment-rail { width: 10px; flex-shrink: 0; cursor: pointer; position: relative; }
+.forum-comment-rail::after { content: ''; position: absolute; left: 4px; top: 4px; bottom: 0; width: 1.5px; background: var(--border); border-radius: 1px; }
+.forum-comment-rail:hover::after { background: var(--green-light); }
+.forum-comment-main { flex: 1; min-width: 0; }
+.forum-comment .forum-text { font-size: 12.5px; }
+.forum-reply-box { margin: 4px 0 8px; }
+.forum-side { display: flex; flex-direction: column; gap: 12px; position: sticky; top: 90px; }
+.forum-side-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 10px; padding: 14px; }
+.forum-side-title { font-family: var(--serif); font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.forum-side-text { font-size: 11px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 10px; }
+.forum-side-label { display: block; font-size: 10px; color: var(--text-secondary); margin-bottom: 4px; }
+.forum-side .mat-input { width: 100%; box-sizing: border-box; }
+.forum-flairs { display: flex; flex-wrap: wrap; gap: 5px; }
+.forum-flairs .forum-flair { cursor: pointer; }
+.forum-flairs .forum-flair.sel { border-color: currentColor; }
+.forum-rules { margin: 0; padding-left: 16px; font-size: 11px; color: var(--text-secondary); line-height: 1.7; }
+.forum-toast { position: fixed; bottom: 20px; right: 24px; background: var(--green-deep); color: var(--green-pale); font-size: 12px; padding: 8px 14px; border-radius: 20px; opacity: 0; transform: translateY(8px); transition: all 0.2s; pointer-events: none; z-index: 60; }
+.forum-toast.show { opacity: 1; transform: none; }
 
 /* footer */
 .footer-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 24px; background: var(--bg-subtle); border-top: 0.5px solid var(--border); grid-column: 1 / -1; }
@@ -404,6 +479,8 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
   .home-grid { padding: 0 16px; }
   .home-grid { grid-template-columns: 1fr; }
   .si-layout { grid-template-columns: 1fr; }
+  .forum-layout { grid-template-columns: 1fr; }
+  .forum-side { position: static; order: -1; }
   .si-main { border-right: none; }
   .si-side { border-top: 0.5px solid var(--border); padding: 20px 16px; }
   .si-periods { grid-template-columns: 1fr; }
@@ -429,7 +506,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
     <div class="nav-pill" onclick="navClick(this,'circular-economy')">Circular economy</div>
     <div class="nav-pill">Emerging</div>
     <div class="nav-pill" onclick="navClick(this,'research')">Research</div>
-    <div class="nav-pill" onclick="navClick(this,'community')">Community</div>
+    <div class="nav-pill" id="nav-forum" onclick="navClick(this,'forum')">Forum</div>
   </div>
 </div>
 
@@ -868,51 +945,71 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 </div>
 
 <!-- COMMUNITY OVERLAY -->
-<div class="overlay-panel" id="panel-community">
+<div class="overlay-panel" id="panel-forum">
   <div class="overlay-header">
     <div>
-      <div class="overlay-title"><i class="ti ti-users"></i> Community</div>
-      <div class="overlay-subtitle">Share papers, case studies, EPDs, and built project records with the SROT knowledge base</div>
+      <div class="overlay-title"><i class="ti ti-messages"></i> Forum</div>
+      <div class="overlay-subtitle">Ask for feedback on your designs, share research and built projects, and discuss materials with others</div>
     </div>
-    <button class="overlay-close" onclick="closeOverlay('panel-community')">← Back to Analyse</button>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="forum-live" title="Updates live across your open tabs"><span class="forum-live-dot"></span> Live</span>
+      <button class="overlay-close" onclick="closeOverlay('panel-forum')">← Back to Analyse</button>
+    </div>
   </div>
   <div class="overlay-body">
-    <div class="section">
-      <div class="upload-zone-sm">
-        <i class="ti ti-upload" style="font-size:18px;color:var(--text-tertiary);display:block;margin-bottom:6px"></i>
-        <div style="font-size:12px;font-weight:500;margin-bottom:4px">Share your data</div>
-        <div style="font-size:10px;color:var(--text-secondary);line-height:1.6">Upload papers, case studies, EPDs, or built project records to the SROT knowledge base.</div>
+    <div class="forum-demo"><i class="ti ti-info-circle"></i> Demo mode: posts and comments are saved in this browser only, so other people can't see them yet. Open tabs update live.</div>
+    <div class="forum-layout">
+      <div>
+        <div id="forum-feed-head">
+          <div class="forum-composer" id="forum-composer">
+            <div class="forum-composer-row">
+              <span class="forum-av av-teal"><i class="ti ti-pencil"></i></span>
+              <input id="forum-title" class="mat-input" type="text" maxlength="300" placeholder="Create a post — ask for feedback, share a project…" onfocus="forumExpandComposer()">
+            </div>
+            <div class="forum-composer-more">
+              <textarea id="forum-body" class="mat-input forum-textarea" rows="4" maxlength="10000" placeholder="Add details (optional)"></textarea>
+              <div id="forum-attach-preview"></div>
+              <div class="forum-composer-bar">
+                <select id="forum-flair" class="mat-input forum-select" aria-label="Flair"></select>
+                <button class="btn-ghost" id="forum-attach-btn" onclick="forumAttachAnalysis()"><i class="ti ti-chart-bar"></i> Attach my analysis</button>
+                <span style="flex:1"></span>
+                <button class="btn-ghost" onclick="forumCancelPost()">Cancel</button>
+                <button class="btn-primary" onclick="forumSubmitPost()">Post</button>
+              </div>
+            </div>
+          </div>
+          <div class="forum-sort">
+            <button data-sort="hot" onclick="forumSetSort('hot')"><i class="ti ti-flame"></i> Hot</button>
+            <button data-sort="new" onclick="forumSetSort('new')"><i class="ti ti-sparkles"></i> New</button>
+            <button data-sort="top" onclick="forumSetSort('top')"><i class="ti ti-trending-up"></i> Top</button>
+          </div>
+        </div>
+        <div id="forum-main"></div>
       </div>
-      <div class="divider-label" style="margin-top:14px">
-        <div class="divider-line"></div>
-        <span>Example contributions</span>
-        <div class="divider-line"></div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <div class="contrib-item">
-          <div class="contrib-av av-teal">AR</div>
-          <div><div class="contrib-name">Aarav Rao</div><div class="contrib-type">LCA: Bamboo structural, India</div></div>
-          <div class="contrib-time">2h ago</div>
+      <aside class="forum-side">
+        <div class="forum-side-card">
+          <div class="forum-side-title">About the forum</div>
+          <div class="forum-side-text">A place to get feedback on material choices, compare carbon numbers, and learn from built and vernacular projects. Run an analysis, then attach it to a post to get feedback on it.</div>
+          <label class="forum-side-label" for="forum-name">Your display name</label>
+          <input id="forum-name" class="mat-input" type="text" maxlength="40" placeholder="Guest" oninput="forumSaveName()">
         </div>
-        <div class="contrib-item">
-          <div class="contrib-av av-blue">SK</div>
-          <div><div class="contrib-name">Sara Kovač</div><div class="contrib-type">Built: Rammed earth, Croatia</div></div>
-          <div class="contrib-time">5h ago</div>
+        <div class="forum-side-card">
+          <div class="forum-side-title">Filter by flair</div>
+          <div class="forum-flairs" id="forum-flairs"></div>
         </div>
-        <div class="contrib-item">
-          <div class="contrib-av av-amber">JO</div>
-          <div><div class="contrib-name">James Osei</div><div class="contrib-type">Innovation: Mycelium pilot, Ghana</div></div>
-          <div class="contrib-time">1d ago</div>
+        <div class="forum-side-card">
+          <div class="forum-side-title">Rules</div>
+          <ol class="forum-rules">
+            <li>Be kind and constructive.</li>
+            <li>Cite sources for carbon figures (EPDs, LCAs, databases).</li>
+            <li>Say where a project is — climate and supply chains matter.</li>
+            <li>No spam or self-promotion without substance.</li>
+          </ol>
         </div>
-        <div class="contrib-item">
-          <div class="contrib-av av-purple">ML</div>
-          <div><div class="contrib-name">Meera Lal</div><div class="contrib-type">Vernacular: Rajasthani stone, India</div></div>
-          <div class="contrib-time">2d ago</div>
-        </div>
-      </div>
+      </aside>
     </div>
-
   </div>
+  <div class="forum-toast" id="forum-toast"></div>
 </div>
 <!-- CIRCULAR ECONOMY OVERLAY -->
 <div class="overlay-panel" id="panel-circular-economy">
@@ -1479,8 +1576,12 @@ function navClick(pill, target) {
   } else if (target === 'circular-economy') {
     document.getElementById('panel-circular-economy').classList.add('show');
     loadCircularEconomy();
-  } else if (target === 'research' || target === 'community') {
-    document.getElementById('panel-' + target).classList.add('show');
+  } else if (target === 'research') {
+    document.getElementById('panel-research').classList.add('show');
+  } else if (target === 'forum') {
+    document.getElementById('panel-forum').classList.add('show');
+    forumInit();
+    history.replaceState(null, '', '#forum');
   }
 }
 
@@ -1490,6 +1591,7 @@ function closeAllOverlays() {
 
 function closeOverlay(id) {
   document.getElementById(id).classList.remove('show');
+  if (location.hash === '#forum') history.replaceState(null, '', '#materials');
   document.querySelectorAll('.nav-pill').forEach(p => p.classList.toggle('on', p.id === 'nav-analyse'));
 }
 
@@ -1702,11 +1804,13 @@ const FALLBACK_CIRC_DB = [
 // open the view named in the URL hash (#site, #materials), else the front page
 function showViewFromHash() {
   const v = location.hash.slice(1);
+  if (v === 'forum') { navClick(document.getElementById('nav-forum'), 'forum'); return; }
   showView(['materials', 'site'].includes(v) ? v : 'home');
 }
 window.addEventListener('DOMContentLoaded', showViewFromHash);
 window.addEventListener('hashchange', showViewFromHash);
 </script>
 <script src="js/site-intelligence.js"></script>
+<script src="js/forum.js"></script>
 </body>
 </html>
