@@ -408,6 +408,33 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 .mat-db-projects { font-size: 10px; color: var(--text-tertiary); display: flex; align-items: center; gap: 4px; }
 .mat-db-link { font-size: 10px; color: var(--blue); display: flex; align-items: center; gap: 3px; cursor: pointer; margin-top: 6px; text-decoration: none; }
 .mat-db-link:hover { text-decoration: underline; }
+.matdb-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; }
+.matdb-side .overlay-search-bar { margin-bottom: 14px; }
+.matdb-list { display: flex; flex-direction: column; gap: 6px; }
+.matdb-item { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; font-family: var(--sans); padding: 10px 12px; border: 0.5px solid var(--border); border-radius: 10px; background: var(--bg-card); color: var(--text-primary); cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.matdb-item:hover { border-color: var(--green-light); }
+.matdb-item.on { background: var(--green-pale); border-color: var(--green-light); }
+.matdb-item-text { flex: 1; min-width: 0; }
+.matdb-item .mat-db-name { font-size: 12px; }
+.matdb-item .mat-db-category { margin-top: 2px; }
+.matdb-item-carbon { font-family: var(--serif); font-size: 13px; font-weight: 700; text-align: right; white-space: nowrap; }
+.matdb-detail { border: 0.5px solid var(--border); border-radius: 12px; background: var(--bg-card); padding: 22px 24px; position: sticky; top: 90px; min-height: 260px; }
+.matdb-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 220px; text-align: center; font-size: 12px; color: var(--text-tertiary); }
+.matdb-empty i { font-size: 28px; }
+.matdb-detail-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 0.5px solid var(--border); }
+.matdb-detail-name { font-family: var(--serif); font-size: 20px; font-weight: 700; color: var(--text-primary); }
+.matdb-detail-carbon { font-family: var(--serif); font-size: 22px; font-weight: 700; text-align: right; }
+.matdb-block { margin-bottom: 20px; }
+.matdb-block:last-child { margin-bottom: 0; }
+.matdb-block-title { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.matdb-block-title i { font-size: 13px; color: var(--green-deep); }
+.matdb-block p { font-size: 13px; color: var(--text-secondary); line-height: 1.65; margin: 0 0 10px; }
+.matdb-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 10px; }
+.matdb-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+.matdb-suppliers { display: flex; flex-direction: column; gap: 6px; }
+.matdb-supplier { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 0.5px solid var(--border); border-radius: 8px; font-size: 12px; color: var(--text-primary); text-decoration: none; }
+.matdb-supplier:hover { border-color: var(--green-light); }
+.matdb-supplier span { color: var(--blue); font-size: 11px; display: flex; align-items: center; gap: 3px; }
 .circ-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .circ-card { border: 0.5px solid var(--border); border-radius: 12px; padding: 16px; background: var(--bg-card); transition: border-color 0.15s; }
 .circ-card:hover { border-color: var(--green-light); }
@@ -494,6 +521,8 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
   .col-panel { border-right: none; border-bottom: 0.5px solid var(--border); }
   .prec-grid, .em-grid, .insights-grid, .mat-db-grid, .circ-grid { grid-template-columns: 1fr; }
   .overlay-panel { left: 0; top: 0; }
+  .matdb-layout { grid-template-columns: 1fr; }
+  .matdb-detail { position: static; padding: 18px 16px; }
   .overlay-header { padding: 14px 16px; flex-wrap: wrap; gap: 10px; }
   .home-view { padding: 0 0 40px; }
   .home-hero { padding: 28px 16px; margin-bottom: 24px; }
@@ -900,7 +929,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 </div>
 
 <!-- MATERIALS DB OVERLAY -->
-<div class="overlay-panel" id="panel-materials-db">
+<div class="overlay-panel full-width" id="panel-materials-db">
   <div class="overlay-header">
     <div>
       <div class="overlay-title"><i class="ti ti-database"></i> Materials Database</div>
@@ -908,15 +937,20 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
     </div>
     <button class="overlay-close" onclick="closeOverlay('panel-materials-db')">← Back to Analyse</button>
   </div>
-  <div class="overlay-body">
-    <div class="overlay-search-bar">
-      <input class="overlay-search-inp" id="matdb-search" type="text" placeholder="Search materials, categories, or properties…" oninput="filterMatDB()">
-      <button class="btn-primary" onclick="loadMaterialsDB(true)"><i class="ti ti-refresh" style="font-size:11px"></i> Refresh from web</button>
-    </div>
-    <div class="overlay-section-title"><i class="ti ti-leaf"></i> Sustainable materials — live from research</div>
-    <div id="matdb-grid" class="mat-db-grid">
-      <div class="loading-state" style="grid-column:1/-1"><div class="loading-spinner"></div><span style="font-size:12px">Loading sustainable materials…</span></div>
-    </div>
+  <div class="overlay-body matdb-layout">
+    <aside class="matdb-side">
+      <div class="overlay-search-bar">
+        <input class="overlay-search-inp" id="matdb-search" type="text" placeholder="Search materials…" oninput="filterMatDB()">
+        <button class="btn-ghost" onclick="loadMaterialsDB(true)" title="Refresh from web" aria-label="Refresh from web"><i class="ti ti-refresh"></i></button>
+      </div>
+      <div class="overlay-section-title"><i class="ti ti-leaf"></i> Materials</div>
+      <div id="matdb-grid" class="matdb-list">
+        <div class="loading-state"><div class="loading-spinner"></div><span style="font-size:12px">Loading sustainable materials…</span></div>
+      </div>
+    </aside>
+    <section class="matdb-detail" id="matdb-detail">
+      <div class="matdb-empty"><i class="ti ti-hand-click"></i><span>Select a material to see its description, circular economy impact, and where to get it.</span></div>
+    </section>
   </div>
 </div>
 
@@ -1729,6 +1763,8 @@ let matDBData = [];
 async function loadMaterialsDB(force = false) {
   if (matDBLoaded && !force) return;
   matDBLoaded = false;
+  matDBSelected = null;
+  document.getElementById('matdb-detail').innerHTML = `<div class="matdb-empty"><i class="ti ti-hand-click"></i><span>Select a material to see its description, circular economy impact, and where to get it.</span></div>`;
   const grid = document.getElementById('matdb-grid');
   grid.innerHTML = `<div class="loading-state" style="grid-column:1/-1"><div class="loading-spinner"></div><span style="font-size:12px">Searching latest sustainable materials research…</span></div>`;
 
@@ -1744,6 +1780,9 @@ async function loadMaterialsDB(force = false) {
 - reuse_pct (number 0-100)
 - recycle_pct (number 0-100)
 - carbon_color (string: "#1D9E75" for low, "#EF9F27" for medium, "#D85A30" for high carbon)
+- circular_impact (string, 2 sentences on its circular economy impact: reuse, recycling, take-back, end of life)
+- strategies (array of 3-4 short circular strategies like ["Design for disassembly","Manufacturer take-back"])
+- suppliers (array of 2-3 objects { name, url } for real manufacturers, suppliers, or directories where it can be bought)
 
 Return ONLY valid JSON array, no markdown, no explanation.`;
 
@@ -1776,36 +1815,67 @@ Return ONLY valid JSON array, no markdown, no explanation.`;
   }
 }
 
+let matDBSelected = null;
+
 function renderMatDB(data) {
-  const grid = document.getElementById('matdb-grid');
-  if (!data || data.length === 0) { grid.innerHTML = `<div class="loading-state" style="grid-column:1/-1">No materials found.</div>`; return; }
-  grid.innerHTML = data.map(m => `
-    <div class="mat-db-card">
-      <div class="mat-db-header">
-        <div>
-          <div class="mat-db-name">${m.name}</div>
-          <span class="mat-db-category">${m.category}</span>
-        </div>
-        <div style="text-align:right">
-          <div class="mat-db-carbon" style="color:${m.carbon_color || 'var(--green-deep)'}">${m.carbon_kgco2e_per_m2}</div>
-          <div class="mat-db-carbon-label">kgCO₂e/m²</div>
-        </div>
+  const list = document.getElementById('matdb-grid');
+  if (!data || data.length === 0) { list.innerHTML = `<div class="loading-state">No materials found.</div>`; return; }
+  list.innerHTML = data.map(m => {
+    const i = matDBData.indexOf(m);
+    return `
+    <button class="matdb-item${m === matDBSelected ? ' on' : ''}" onclick="selectMatDB(${i})">
+      <div class="matdb-item-text">
+        <div class="mat-db-name">${m.name}</div>
+        <span class="mat-db-category">${m.category}</span>
       </div>
-      <div class="mat-db-desc">${m.description}</div>
-      <div class="mat-db-tags">${(m.tags||[]).map(t => `<span class="mat-db-tag">${t}</span>`).join('')}</div>
-      <div class="mat-db-projects"><i class="ti ti-building" style="font-size:10px"></i> ${m.real_projects || '—'}</div>
-      ${m.source_url ? `<a class="mat-db-link" href="${m.source_url}" target="_blank"><i class="ti ti-external-link" style="font-size:10px"></i> View source / EPD</a>` : ''}
-      <div style="margin-top:10px;display:flex;gap:16px">
-        <div style="flex:1">
-          <div style="font-size:9px;color:var(--text-tertiary);margin-bottom:2px">Reuse</div>
-          <div class="bar-track"><div class="bar-fill bf-teal" style="width:${m.reuse_pct||0}%"></div></div>
-        </div>
-        <div style="flex:1">
-          <div style="font-size:9px;color:var(--text-tertiary);margin-bottom:2px">Recycle</div>
-          <div class="bar-track"><div class="bar-fill bf-green" style="width:${m.recycle_pct||0}%"></div></div>
-        </div>
+      <div class="matdb-item-carbon" style="color:${m.carbon_color || 'var(--green-deep)'}">${m.carbon_kgco2e_per_m2}<div class="mat-db-carbon-label">kgCO₂e/m²</div></div>
+    </button>`;
+  }).join('');
+}
+
+function selectMatDB(i) {
+  const m = matDBData[i];
+  if (!m) return;
+  matDBSelected = m;
+  document.querySelectorAll('#matdb-grid .matdb-item').forEach(b => b.classList.toggle('on', b.getAttribute('onclick') === `selectMatDB(${i})`));
+  const suppliers = (m.suppliers && m.suppliers.length) ? m.suppliers
+    : (m.source_url ? [{ name: m.source_url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/.*$/, ''), url: m.source_url }] : []);
+  const bar = (label, pct, cls) => `
+    <div>
+      <div class="matdb-bar-label"><span>${label}</span><span>${pct || 0}%</span></div>
+      <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct || 0}%"></div></div>
+    </div>`;
+  const detail = document.getElementById('matdb-detail');
+  detail.innerHTML = `
+    <div class="matdb-detail-head">
+      <div>
+        <div class="matdb-detail-name">${m.name}</div>
+        <span class="mat-db-category">${m.category}</span>
       </div>
-    </div>`).join('');
+      <div>
+        <div class="matdb-detail-carbon" style="color:${m.carbon_color || 'var(--green-deep)'}">${m.carbon_kgco2e_per_m2}</div>
+        <div class="mat-db-carbon-label">kgCO₂e/m²${m.carbon_label ? ' · ' + m.carbon_label : ''}</div>
+      </div>
+    </div>
+    <div class="matdb-block">
+      <div class="matdb-block-title"><i class="ti ti-info-circle"></i> Description</div>
+      <p>${m.description || '—'}</p>
+      <div class="mat-db-tags">${(m.tags || []).map(t => `<span class="mat-db-tag">${t}</span>`).join('')}</div>
+      ${m.real_projects ? `<div class="mat-db-projects"><i class="ti ti-building" style="font-size:10px"></i> ${m.real_projects}</div>` : ''}
+    </div>
+    <div class="matdb-block">
+      <div class="matdb-block-title"><i class="ti ti-recycle"></i> Circular economy impact</div>
+      <div class="matdb-bars">${bar('Reuse', m.reuse_pct, 'bf-teal')}${bar('Recycle', m.recycle_pct, 'bf-green')}</div>
+      ${m.circular_impact ? `<p>${m.circular_impact}</p>` : ''}
+      ${(m.strategies || []).length ? `<div class="circ-strategies">${m.strategies.map(t => `<span class="circ-strategy">${t}</span>`).join('')}</div>` : ''}
+    </div>
+    <div class="matdb-block">
+      <div class="matdb-block-title"><i class="ti ti-truck-delivery"></i> Where to get it</div>
+      ${suppliers.length ? `<div class="matdb-suppliers">${suppliers.map(sp => `
+        <a class="matdb-supplier" href="${sp.url}" target="_blank" rel="noopener">${sp.name}<span><i class="ti ti-external-link"></i> Visit</span></a>`).join('')}</div>`
+        : `<p>No supplier listed yet.</p>`}
+    </div>`;
+  if (window.matchMedia('(max-width: 860px)').matches) detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function filterMatDB() {
@@ -1912,12 +1982,12 @@ function renderCircDB(data) {
 
 // ─── FALLBACK DATA ───
 const FALLBACK_MAT_DB = [
-  { name:"Cross-Laminated Timber (CLT)", category:"Structural", carbon_kgco2e_per_m2: -30, carbon_label:"Carbon storing", description:"CLT panels store atmospheric carbon for the building lifetime. Freres Bros and SmartLam supply nationally in the US, and the Bullitt Center in Seattle used CLT throughout.", tags:["Carbon sequestering","FSC certified","IBC 2021 compliant"], real_projects:"Bullitt Center, Seattle · Ascent Tower, Milwaukee", source_url:"https://www.freresbros.com", reuse_pct:70, recycle_pct:75, carbon_color:"#1D9E75" },
-  { name:"Recycled-Content EAF Steel", category:"Structural", carbon_kgco2e_per_m2: 80, carbon_label:"Low", description:"Electric arc furnace steel from Nucor or SDI uses 90%+ scrap, cutting carbon by ~72% vs virgin steel. Framework Building in Portland specified high-recycled structural steel.", tags:["90%+ recycled","Infinite recyclability","Low-carbon"], real_projects:"Framework Building, Portland · Kendeda Building, Atlanta", source_url:"https://www.nucor.com/sustainability", reuse_pct:85, recycle_pct:98, carbon_color:"#1D9E75" },
-  { name:"Mineral Wool Insulation", category:"Insulation", carbon_kgco2e_per_m2: 8, carbon_label:"Very low", description:"Rockwool and Knauf Insulation produce mineral wool with up to 70% recycled content. Fire-resistant to 2000°F and widely available across the US.", tags:["70% recycled","Fire resistant","Acoustic performance"], real_projects:"NREL Research Facility, Golden CO · Many Passive House projects", source_url:"https://www.rockwool.com", reuse_pct:20, recycle_pct:60, carbon_color:"#1D9E75" },
-  { name:"Reclaimed Brick", category:"Envelope", carbon_kgco2e_per_m2: 5, carbon_label:"Near zero", description:"Salvaged Chicago common brick or Philadelphia brick carries near-zero manufacturing carbon. Specialist suppliers like Blackacre and ReSource operate in most US metro areas.", tags:["Near-zero carbon","Local sourcing","Historic character"], real_projects:"Various adaptive reuse projects nationally", source_url:"https://www.salvagedmaterials.com", reuse_pct:95, recycle_pct:80, carbon_color:"#1D9E75" },
-  { name:"Hempcrete", category:"Envelope", carbon_kgco2e_per_m2: -35, carbon_label:"Carbon negative", description:"Hemp hurd and lime binder make a carbon-negative wall system. American Lime Technology and Hemp Block USA supply nationally. The Flat Iron Building in Asheville NC used hempcrete.", tags:["Carbon negative","Breathable","Bio-based"], real_projects:"Various residential US projects · Flat Iron Building, Asheville NC", source_url:"https://www.americanlimetechnology.com", reuse_pct:80, recycle_pct:85, carbon_color:"#1D9E75" },
-  { name:"Recycled Cellulose Insulation", category:"Insulation", carbon_kgco2e_per_m2: 3, carbon_label:"Ultra low", description:"Blown cellulose uses 85% recycled newsprint — the lowest embodied carbon of any common US insulation. GreenFiber and Nu-Wool produce it nationally.", tags:["85% recycled","Lowest carbon insulation","Code approved"], real_projects:"Thousands of US residential and commercial projects", source_url:"https://www.greenfiber.com", reuse_pct:10, recycle_pct:80, carbon_color:"#1D9E75" },
+  { name:"Cross-Laminated Timber (CLT)", category:"Structural", carbon_kgco2e_per_m2: -30, carbon_label:"Carbon storing", description:"CLT panels store atmospheric carbon for the building lifetime. Freres Bros and SmartLam supply nationally in the US, and the Bullitt Center in Seattle used CLT throughout.", tags:["Carbon sequestering","FSC certified","IBC 2021 compliant"], real_projects:"Bullitt Center, Seattle · Ascent Tower, Milwaukee", source_url:"https://www.freresbros.com", reuse_pct:70, recycle_pct:75, carbon_color:"#1D9E75", circular_impact:"Bolted CLT panels can be unbolted and reused in new buildings, keeping their stored carbon locked up for another life. Offcuts and end-of-life panels can be chipped into engineered wood products or used for biomass energy.", strategies:["Design for disassembly","Panel reuse","Carbon storage","Biomass recovery"], suppliers:[{name:"Freres Engineered Wood",url:"https://www.freresbros.com"},{name:"SmartLam North America",url:"https://www.smartlam.com"},{name:"Mercer Mass Timber",url:"https://mercermasstimber.com"}] },
+  { name:"Recycled-Content EAF Steel", category:"Structural", carbon_kgco2e_per_m2: 80, carbon_label:"Low", description:"Electric arc furnace steel from Nucor or SDI uses 90%+ scrap, cutting carbon by ~72% vs virgin steel. Framework Building in Portland specified high-recycled structural steel.", tags:["90%+ recycled","Infinite recyclability","Low-carbon"], real_projects:"Framework Building, Portland · Kendeda Building, Atlanta", source_url:"https://www.nucor.com/sustainability", reuse_pct:85, recycle_pct:98, carbon_color:"#1D9E75", circular_impact:"Steel can be recycled again and again without losing strength, and EAF mills run on scrap, so each beam feeds the next. Bolted connections let whole members be reused directly, which saves even more carbon than recycling.", strategies:["Infinite recyclability","Bolted connections for reuse","Scrap-based production","Closed-loop supply"], suppliers:[{name:"Nucor",url:"https://www.nucor.com"},{name:"Steel Dynamics (SDI)",url:"https://www.steeldynamics.com"},{name:"CMC",url:"https://www.cmc.com"}] },
+  { name:"Mineral Wool Insulation", category:"Insulation", carbon_kgco2e_per_m2: 8, carbon_label:"Very low", description:"Rockwool and Knauf Insulation produce mineral wool with up to 70% recycled content. Fire-resistant to 2000°F and widely available across the US.", tags:["70% recycled","Fire resistant","Acoustic performance"], real_projects:"NREL Research Facility, Golden CO · Many Passive House projects", source_url:"https://www.rockwool.com", reuse_pct:20, recycle_pct:60, carbon_color:"#1D9E75", circular_impact:"Mineral wool is made largely from recycled slag and stone, and clean offcuts can go back into production. Rockwool runs a recycling service for site waste in some markets, though most end-of-life wool is still landfilled.", strategies:["Recycled content","Manufacturer recycling","Offcut return"], suppliers:[{name:"ROCKWOOL",url:"https://www.rockwool.com"},{name:"Knauf Insulation",url:"https://www.knaufinsulation.us"},{name:"Owens Corning Thermafiber",url:"https://www.owenscorning.com"}] },
+  { name:"Reclaimed Brick", category:"Envelope", carbon_kgco2e_per_m2: 5, carbon_label:"Near zero", description:"Salvaged Chicago common brick or Philadelphia brick carries near-zero manufacturing carbon. Specialist suppliers like Blackacre and ReSource operate in most US metro areas.", tags:["Near-zero carbon","Local sourcing","Historic character"], real_projects:"Various adaptive reuse projects nationally", source_url:"https://www.salvagedmaterials.com", reuse_pct:95, recycle_pct:80, carbon_color:"#1D9E75", circular_impact:"Reclaimed brick avoids almost all the firing energy of new brick and keeps demolition waste out of landfill. Bricks laid in lime mortar can be cleaned and reused again; broken bricks become aggregate or fill.", strategies:["Direct reuse","Lime mortar for future reuse","Crushed aggregate","Local sourcing"], suppliers:[{name:"Habitat for Humanity ReStore",url:"https://www.habitat.org/restores"},{name:"Build Reuse directory",url:"https://www.buildreuse.org"}] },
+  { name:"Hempcrete", category:"Envelope", carbon_kgco2e_per_m2: -35, carbon_label:"Carbon negative", description:"Hemp hurd and lime binder make a carbon-negative wall system. American Lime Technology and Hemp Block USA supply nationally. The Flat Iron Building in Asheville NC used hempcrete.", tags:["Carbon negative","Breathable","Bio-based"], real_projects:"Various residential US projects · Flat Iron Building, Asheville NC", source_url:"https://www.americanlimetechnology.com", reuse_pct:80, recycle_pct:85, carbon_color:"#1D9E75", circular_impact:"Hempcrete stores more carbon than it takes to make, and the hemp regrows in a single season. At end of life it can be crushed and recast or returned to soil as a lime-rich amendment.", strategies:["Carbon storing","Rapidly renewable","Crush and recast","Returns to soil"], suppliers:[{name:"American Lime Technology",url:"https://www.americanlimetechnology.com"},{name:"Hempitecture",url:"https://www.hempitecture.com"}] },
+  { name:"Recycled Cellulose Insulation", category:"Insulation", carbon_kgco2e_per_m2: 3, carbon_label:"Ultra low", description:"Blown cellulose uses 85% recycled newsprint — the lowest embodied carbon of any common US insulation. GreenFiber and Nu-Wool produce it nationally.", tags:["85% recycled","Lowest carbon insulation","Code approved"], real_projects:"Thousands of US residential and commercial projects", source_url:"https://www.greenfiber.com", reuse_pct:10, recycle_pct:80, carbon_color:"#1D9E75", circular_impact:"Cellulose turns waste paper into insulation, giving newsprint a second life inside the wall. Loose-fill cellulose can be vacuumed out and reblown when a building is renovated.", strategies:["Recycled paper feedstock","Vacuum and reblow","Low-energy production"], suppliers:[{name:"GreenFiber",url:"https://www.greenfiber.com"},{name:"Nu-Wool",url:"https://www.nuwool.com"}] },
 ];
 
 const FALLBACK_CIRC_DB = [
