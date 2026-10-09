@@ -383,6 +383,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 /* ─── OVERLAY PANELS (Materials DB, Circular Economy) ─── */
 .overlay-panel { display: none; position: fixed; top: 57px; left: 420px; right: 0; bottom: 0; background: var(--bg); z-index: 50; overflow-y: auto; }
 .overlay-panel.show { display: block; }
+.overlay-panel.full-width { left: 0; }
 .overlay-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 0.5px solid var(--border); background: var(--bg-card); position: sticky; top: 0; z-index: 10; }
 .overlay-title { font-family: var(--serif); font-size: 18px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 10px; }
 .overlay-title i { font-size: 18px; color: var(--green-deep); }
@@ -921,7 +922,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 
 
 <!-- RESEARCH OVERLAY -->
-<div class="overlay-panel" id="panel-research">
+<div class="overlay-panel full-width" id="panel-research">
   <div class="overlay-header">
     <div>
       <div class="overlay-title"><i class="ti ti-file-text"></i> Research</div>
@@ -1024,7 +1025,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 </div>
 
 <!-- COMMUNITY OVERLAY -->
-<div class="overlay-panel" id="panel-forum">
+<div class="overlay-panel full-width" id="panel-forum">
   <div class="overlay-header">
     <div>
       <div class="overlay-title"><i class="ti ti-messages"></i> Forum</div>
