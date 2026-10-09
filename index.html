@@ -381,7 +381,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 .active-bar.show { display: flex; }
 
 /* ─── OVERLAY PANELS (Materials DB, Circular Economy) ─── */
-.overlay-panel { display: none; position: fixed; top: 57px; left: 420px; right: 0; bottom: 0; background: var(--bg); z-index: 50; overflow-y: auto; }
+.overlay-panel { display: none; position: fixed; top: var(--topbar-h, 62px); left: 420px; right: 0; bottom: 0; background: var(--bg); z-index: 50; overflow-y: auto; }
 .overlay-panel.show { display: block; }
 .overlay-panel.full-width { left: 0; }
 .overlay-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 0.5px solid var(--border); background: var(--bg-card); position: sticky; top: 0; z-index: 10; }
@@ -475,7 +475,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 .home-card-cta { font-size: 11px; font-weight: 500; color: var(--green-deep); display: flex; align-items: center; gap: 4px; }
 
 /* ─── SITE INTELLIGENCE MODULE ─── */
-.si-view { min-height: calc(100vh - 57px); }
+.si-view { min-height: calc(100vh - var(--topbar-h, 62px)); }
 .si-search { display: flex; gap: 10px; align-items: center; }
 .si-chip-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
 .si-layout { display: grid; grid-template-columns: 1fr 300px; align-items: start; }
@@ -904,7 +904,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 
 <!-- SITE INTELLIGENCE MODULE -->
 <div class="si-view" id="view-site" style="display:none">
-  <div class="overlay-header" style="top:57px">
+  <div class="overlay-header" style="top:var(--topbar-h, 62px)">
     <div>
       <div class="overlay-title"><i class="ti ti-map-pin"></i> Site Intelligence Module</div>
       <div class="overlay-subtitle">Site analysis for natural disaster risk and long-term environmental effects.</div>
