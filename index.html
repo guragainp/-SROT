@@ -476,13 +476,23 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 .nepal-view { min-height: 100vh; padding: 20px 28px; }
 .nepal-back { font-family: var(--sans); font-size: 12px; color: var(--text-secondary); background: none; border: none; cursor: pointer; padding: 0; }
 .nepal-back:hover { color: var(--green-deep); }
-.home-hero-band { padding: 18px 28px; }
+.home-hero-band { position: relative; height: 226px; padding: 0; overflow: hidden; }
+.word-collage { position: absolute; inset: 0; }
+.wc-word { position: absolute; white-space: nowrap; cursor: help; color: var(--green-deep); background: none; border: none; padding: 2px 4px; line-height: 1.2; animation: wc-drift var(--dur, 9s) ease-in-out var(--delay, 0s) infinite alternate; transition: color 0.15s, opacity 0.15s; }
+.wc-word:hover, .wc-word:focus-visible { color: var(--green-dark); opacity: 1 !important; outline: none; text-decoration: underline; text-decoration-color: var(--green-light); text-underline-offset: 3px; animation-play-state: paused; z-index: 2; }
+.wc-tip { position: absolute; z-index: 5; max-width: 260px; padding: 10px 12px; border-radius: 10px; background: var(--bg-card); border: 0.5px solid var(--green-light); box-shadow: 0 6px 20px rgba(15, 110, 86, 0.12); font-family: var(--sans); font-size: 12px; line-height: 1.5; color: var(--text-secondary); pointer-events: none; opacity: 0; transition: opacity 0.12s; }
+.wc-tip.show { opacity: 1; }
+.wc-tip b { display: block; font-family: var(--serif); font-size: 13px; color: var(--text-primary); margin-bottom: 3px; }
+@keyframes wc-drift { from { transform: translate(0, 0); } to { transform: translate(var(--dx, 6px), var(--dy, -5px)); } }
+@media (prefers-reduced-motion: reduce) { .wc-word { animation: none; } }
 .landing-view { min-height: 100vh; padding: 0 0 64px; }
 .landing-view .home-hero { padding: 72px 28px 64px; margin-bottom: 40px; }
-.landing-tile { align-items: center; text-align: center; padding: 40px 22px 30px; gap: 12px; }
-.landing-tile-logo { display: flex; align-items: baseline; gap: 10px; }
-.landing-tile-logo .logo-deva, .landing-tile-logo .logo-name { font-size: 34px; }
-.landing-tile-region { font-family: var(--serif); font-size: 20px; font-weight: 700; color: var(--text-primary); }
+.landing-grid { max-width: 720px; }
+.landing-tile { align-items: center; justify-content: center; text-align: center; padding: 28px 20px 22px; gap: 6px; }
+.landing-tile-logo { display: flex; align-items: baseline; justify-content: center; gap: 8px; width: 100%; }
+.landing-tile-logo .logo-deva, .landing-tile-logo .logo-name { font-size: 26px; font-weight: 400; }
+.landing-tile-region { font-family: var(--deva); font-size: 17px; font-weight: 400; color: var(--text-primary); letter-spacing: 0.04em; width: 100%; }
+.landing-tile .home-card-cta { justify-content: center; width: 100%; margin-top: 6px; }
 body.no-topbar .top-bar { display: none; }
 
 /* ─── SITE INTELLIGENCE MODULE ─── */
@@ -538,6 +548,7 @@ body.no-topbar .top-bar { display: none; }
   .overlay-header { padding: 14px 16px; flex-wrap: wrap; gap: 10px; }
   .home-view { padding: 0 0 40px; }
   .home-hero { padding: 28px 16px; margin-bottom: 24px; }
+  .home-hero-band { height: 280px; padding: 0; }
   .home-grid { padding: 0 16px; }
   .home-grid { grid-template-columns: 1fr; }
   .si-layout { grid-template-columns: 1fr; }
@@ -595,7 +606,7 @@ body.no-topbar .top-bar { display: none; }
 
 <!-- FRONT PAGE (SROT Global) -->
 <div class="home-view" id="view-home">
-  <div class="home-hero home-hero-band"></div>
+  <div class="home-hero home-hero-band"><div class="word-collage" id="word-collage"></div><div class="wc-tip" id="wc-tip"></div></div>
   <div class="home-grid">
     <button class="home-card" onclick="showView('site')">
       <div class="comp-icon ic-blue"><i class="ti ti-map-pin"></i></div>
@@ -1764,6 +1775,7 @@ function showView(name) {
   const tab = { home: 'nav-home', site: 'nav-site', materials: 'nav-analyse' }[name];
   document.querySelectorAll('.nav-pill').forEach(p => p.classList.toggle('on', p.id === tab));
   if (name === 'site') siInit();
+  if (name === 'home') buildWordCollage();
   if (location.hash !== '#' + name) history.replaceState(null, '', name === 'landing' ? location.pathname : '#' + name);
   window.scrollTo(0, 0);
 }
@@ -2079,6 +2091,88 @@ function contribSubmit() {
   document.getElementById('contrib-list').prepend(item);
   contribCancel();
 }
+
+// Sustainability word collage on the Global home band — hover/focus a word for its definition
+const SUSTAIN_TERMS = [
+  ['Embodied carbon', 'Greenhouse gas emissions from extracting, making, transporting and installing building materials, before the building is ever used.'],
+  ['Operational carbon', 'Emissions from running a building: heating, cooling, lighting and powering equipment over its life.'],
+  ['Circular economy', 'An economic model that keeps materials in use as long as possible through reuse, repair and recycling instead of take-make-waste.'],
+  ['Life cycle assessment', 'A method for measuring the environmental impact of a product or building across every stage, from raw material to end of life.'],
+  ['Net zero', 'A state where the greenhouse gases emitted are balanced by those removed from the atmosphere.'],
+  ['Adaptive reuse', 'Giving an existing building a new purpose instead of demolishing it, saving the carbon already spent on it.'],
+  ['Biophilic design', 'Design that connects people with nature through daylight, plants, natural materials and views.'],
+  ['Passive design', 'Using orientation, shading, insulation and natural ventilation to keep a building comfortable with little or no energy.'],
+  ['Rammed earth', 'Walls built by compacting damp soil in layers inside formwork — durable, low-carbon and thermally massive.'],
+  ['Mass timber', 'Large engineered wood panels and beams, such as CLT and glulam, used as structure in place of concrete or steel.'],
+  ['Thermal mass', 'A material\'s ability to absorb, store and slowly release heat, evening out indoor temperatures.'],
+  ['Carbon sequestration', 'Capturing and storing atmospheric carbon — for example, carbon locked in timber or bamboo as it grows.'],
+  ['Upcycling', 'Turning waste or discarded materials into new products of equal or higher value.'],
+  ['Design for disassembly', 'Detailing buildings so components can be taken apart and reused at end of life instead of demolished.'],
+  ['Resilience', 'The capacity of a building or community to withstand, adapt to and recover from shocks like earthquakes and floods.'],
+  ['Vernacular architecture', 'Building traditions shaped by local climate, materials and craft knowledge over generations.'],
+  ['Bamboo', 'A fast-growing grass that is strong in tension, renewable within a few years, and stores carbon as it grows.'],
+  ['Renewable energy', 'Energy from sources that naturally replenish, such as sun, wind, water and biomass.'],
+  ['Cradle to cradle', 'A design approach where every material is a nutrient for a new cycle, so nothing becomes waste.'],
+  ['Low-carbon concrete', 'Concrete that cuts emissions by replacing some cement with materials like fly ash, slag or calcined clay.'],
+  ['Daylighting', 'Bringing natural light deep into a building to reduce the need for electric lighting.'],
+  ['Material passport', 'A digital record of the materials in a building so they can be identified, valued and reused later.'],
+  ['Biodiversity', 'The variety of living species in a place, which healthy buildings and landscapes help protect.'],
+  ['Retrofit', 'Upgrading an existing building — insulation, windows, systems — to cut energy use and emissions.'],
+];
+function buildWordCollage(force) {
+  const box = document.getElementById('word-collage'), tip = document.getElementById('wc-tip');
+  if (!box || (box.childElementCount && !force) || !box.clientWidth) return;
+  box.innerHTML = '';
+  const fonts = ['var(--serif)', 'var(--sans)', 'var(--deva)'];
+  const W = box.clientWidth, H = box.clientHeight, narrow = W < 640, pad = 10, gap = 8;
+  const placed = [];
+  // Biggest words first, then drop each at a random spot that doesn't collide with earlier ones
+  const terms = SUSTAIN_TERMS.map(t => [t, Math.random()]).sort((a, b) => b[1] - a[1]);
+  terms.forEach(([[term, def], r], i) => {
+    const w = document.createElement('button');
+    w.type = 'button'; w.className = 'wc-word'; w.textContent = term;
+    const size = Math.round((narrow ? 10 : 11) + r * (narrow ? 6 : 10));
+    w.style.fontFamily = fonts[i % fonts.length];
+    w.style.fontSize = size + 'px';
+    w.style.fontWeight = size > 17 ? 600 : 400;
+    w.style.visibility = 'hidden';
+    box.appendChild(w);
+    const ww = w.offsetWidth, wh = w.offsetHeight;
+    let spot = null;
+    for (let t = 0; t < 120 && !spot; t++) {
+      const x = pad + Math.random() * (W - ww - 2 * pad), y = pad + Math.random() * (H - wh - 2 * pad);
+      if (placed.every(q => x + ww + gap < q.x || q.x + q.w + gap < x || y + wh + gap < q.y || q.y + q.h + gap < y)) spot = { x, y, w: ww, h: wh };
+    }
+    if (!spot) { w.remove(); return; }
+    placed.push(spot);
+    w.style.left = spot.x + 'px'; w.style.top = spot.y + 'px'; w.style.visibility = '';
+    w.style.opacity = (0.5 + r * 0.45).toFixed(2);
+    w.style.setProperty('--dx', ((Math.random() - 0.5) * 8).toFixed(1) + 'px');
+    w.style.setProperty('--dy', ((Math.random() - 0.5) * 6).toFixed(1) + 'px');
+    w.style.setProperty('--dur', (5 + Math.random() * 5).toFixed(1) + 's');
+    w.style.setProperty('--delay', (-Math.random() * 5).toFixed(1) + 's');
+    const show = () => {
+      tip.innerHTML = '<b></b>'; tip.firstChild.textContent = term; tip.append(def);
+      tip.classList.add('show');
+      const tw = tip.offsetWidth, th = tip.offsetHeight;
+      const left = Math.max(8, Math.min(W - tw - 8, spot.x + ww / 2 - tw / 2));
+      let top = spot.y + wh + 6;
+      if (top + th > H - 4) top = spot.y - th - 6;
+      tip.style.left = left + 'px'; tip.style.top = Math.max(4, top) + 'px';
+    };
+    const hide = () => tip.classList.remove('show');
+    w.addEventListener('mouseenter', show); w.addEventListener('focus', show);
+    w.addEventListener('mouseleave', hide); w.addEventListener('blur', hide);
+  });
+}
+let wcResizeTimer, wcLastW = 0;
+window.addEventListener('resize', () => {
+  clearTimeout(wcResizeTimer);
+  wcResizeTimer = setTimeout(() => {
+    const box = document.getElementById('word-collage');
+    if (box && box.clientWidth && Math.abs(box.clientWidth - wcLastW) > 40) { wcLastW = box.clientWidth; buildWordCollage(true); }
+  }, 200);
+});
 
 function showViewFromHash() {
   const v = location.hash.slice(1);
