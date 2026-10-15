@@ -473,6 +473,17 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
 .home-card-title { font-family: var(--serif); font-size: 16px; font-weight: 700; }
 .home-card-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; flex: 1; }
 .home-card-cta { font-size: 11px; font-weight: 500; color: var(--green-deep); display: flex; align-items: center; gap: 4px; }
+.home-card-group { cursor: default; }
+.home-card-group:hover { border-color: var(--border); background: var(--bg-card); }
+.home-options { display: flex; flex-direction: column; gap: 8px; }
+.home-option { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; font-family: var(--sans); color: var(--text-primary); background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 10px; padding: 11px 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.home-option:hover, .home-option:focus-visible { border-color: var(--green-light); background: var(--green-xpale); outline: none; }
+.home-option > .ti:first-child, .home-option-deva { width: 22px; text-align: center; font-size: 17px; color: var(--green-deep); flex-shrink: 0; }
+.home-option-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.home-option-title { font-size: 12.5px; font-weight: 600; }
+.home-option-sub { font-size: 11px; color: var(--text-secondary); }
+.home-option-arrow { font-size: 14px; color: var(--green-deep); }
+.nepal-view { min-height: calc(100vh - var(--topbar-h, 62px)); }
 
 /* ─── SITE INTELLIGENCE MODULE ─── */
 .si-view { min-height: calc(100vh - var(--topbar-h, 62px)); }
@@ -575,14 +586,28 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text-primar
       <div class="home-card-desc">Site analysis for natural disaster risk and long-term environmental effects.</div>
       <div class="home-card-cta">Open Site Intelligence Module <i class="ti ti-arrow-right"></i></div>
     </button>
-    <button class="home-card" onclick="showView('materials')">
+    <div class="home-card home-card-group">
       <div class="comp-icon ic-teal"><i class="ti ti-package"></i></div>
       <div class="home-card-title">Material Assessment</div>
-      <div class="home-card-desc">Upload a building model, compare your materials with lower-carbon alternatives, and explore precedents.</div>
-      <div class="home-card-cta">Open material assessment <i class="ti ti-arrow-right"></i></div>
-    </button>
+      <div class="home-card-desc">Upload a building model, compare your materials with lower-carbon alternatives, and explore precedents. Choose a version:</div>
+      <div class="home-options">
+        <button class="home-option" onclick="showView('materials')">
+          <i class="ti ti-world"></i>
+          <span class="home-option-text"><span class="home-option-title">Material assessment for Global</span><span class="home-option-sub">Worldwide materials, carbon data, and precedents</span></span>
+          <i class="ti ti-arrow-right home-option-arrow"></i>
+        </button>
+        <button class="home-option" onclick="showView('nepal')">
+          <span class="logo-deva home-option-deva">ने</span>
+          <span class="home-option-text"><span class="home-option-title">Material assessment for Nepal</span><span class="home-option-sub">Mountain, hilly, and Terai regions with local materials</span></span>
+          <i class="ti ti-arrow-right home-option-arrow"></i>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
+
+<!-- NEPAL MATERIAL ASSESSMENT (placeholder until the Nepal version is connected) -->
+<div class="nepal-view" id="view-nepal" style="display:none"></div>
 
 <!-- PAGE BODY -->
 <div class="page-body" id="view-materials" style="display:none">
@@ -1723,7 +1748,7 @@ window.addEventListener('resize', syncTopbarHeight);
 // ─── VIEWS: front page, material assessment, site intelligence ───
 function showView(name) {
   closeAllOverlays();
-  ['home', 'materials', 'site'].forEach(v => {
+  ['home', 'materials', 'site', 'nepal'].forEach(v => {
     const el = document.getElementById('view-' + v);
     if (el) el.style.display = v === name ? '' : 'none';
   });
@@ -2049,7 +2074,7 @@ function contribSubmit() {
 function showViewFromHash() {
   const v = location.hash.slice(1);
   if (v === 'forum') { navClick(document.getElementById('nav-forum'), 'forum'); return; }
-  showView(['materials', 'site'].includes(v) ? v : 'home');
+  showView(['materials', 'site', 'nepal'].includes(v) ? v : 'home');
 }
 window.addEventListener('DOMContentLoaded', showViewFromHash);
 window.addEventListener('hashchange', showViewFromHash);
